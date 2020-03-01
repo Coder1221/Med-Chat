@@ -1,7 +1,7 @@
 {
-  "name": "ehsass",
+  "name": "github.com/coder1221/med-chat",
   "version": "0.0.0",
-  "description": "Running",
+  "description": "Coder1221/Med-Chat @ Mar 1, 2020",
   "author": null,
   "private": true,
   "main": "node_modules/expo/AppEntry.js",
@@ -15,11 +15,16 @@
     "expo-facebook": "8.0.0",
     "react-navigation": "^4.0.10",
     "react-native-paper": "3.1.1",
+    "expo-google-app-auth": "8.0.1",
     "react-facebook-login": "4.1.1",
     "react-native-screens": "^2.0.0-alpha.20",
     "react-navigation-stack": "2.1.1",
     "react-native-gesture-handler": "^1.5.0",
     "react-native-safe-area-context": "^0.6.0",
-    "@react-native-community/masked-view": "^0.1.1"
+    "@react-native-community/masked-view": "^0.1.1",
+    "firebase": "7.9.3",
+    "react-firebaseui": "4.1.0",
+    "react-native-firebase": "5.6.0",
+    "react-native-google-signin": "2.1.1"
   }
 }
