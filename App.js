@@ -1,13 +1,26 @@
-import * as React from 'react';
-import { Text, View, StyleSheet } from 'react-native';
-import Constants from 'expo-constants';
-import { Button } from 'react-native';
-import Navigation from "./navigation";
+import React from 'react';
+import {
+  SafeAreaView,
+  StyleSheet,
+  ScrollView,
+  View,
+  Text,
+  StatusBar,
+} from 'react-native';
 
-export default class App extends React.Component {
-  render() {
-      return(
-        <Navigation />
-      );
-  }
+import {
+  Header,
+  LearnMoreLinks,
+  Colors,
+  DebugInstructions,
+  ReloadInstructions,
+} from 'react-native/Libraries/NewAppScreen';
+
+import MainStackNavigator from './Navigations/index'
+
+const App=()=>{
+  return(
+    <MainStackNavigator/>
+  )
 }
+export default App;
