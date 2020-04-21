@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "45878387137",
+    "firebase_url": "https://phoneauth-medchat.firebaseio.com",
+    "project_id": "phoneauth-medchat",
+    "storage_bucket": "phoneauth-medchat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:45878387137:android:9f4fb5a332470042454f40",
+        "android_client_info": {
+          "package_name": "com.medchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "45878387137-cn5981lsd5gusie85uo95glmobb0629g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.medchat",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "45878387137-aa5h99fi9rqp8613a81958rm4kbeii3b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAesJuvzYq0GQ3XNK0vFA42FTOI0-nTDdI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "45878387137-aa5h99fi9rqp8613a81958rm4kbeii3b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
