@@ -1,25 +1,14 @@
 import React from 'react'
-import {View, Text, Button} from 'react-native'
-import { TextInput } from 'react-native-gesture-handler'
+import { Text, View, Button} from 'react-native'
 
 
-// navigation prop is passed down to all our screen components frfom the stack container
-function homeScreen({ navigation }){
-
-    const handleLogin = () => {
-        console.log('handle login')
-    }
-
+function Home({ navigation }){
     return(
         <View>
-            <Text>Home Screen/ Login Screen</Text>
-            <TextInput placeholder='Username'></TextInput>
-            <TextInput placeholder='Phone'></TextInput>
-            <Button title="LogIn" onPress={() => handleLogin()}/>
-            <Button title="Register" onPress={() => navigation.navigate("RegisterScreen")}/>
-            {/* <Button title="abdul login" onPress={() => console.log("buttonPressed")}/> */}
+            <Text> This is the Home Page</Text>
+            <Button title="Why am i here?" onPress={() => navigation.navigate("Login")} />
         </View>
     )
 }
 
-export default homeScreen;
+export default Home
