@@ -1,0 +1,5 @@
+git status
+git clone
+git remote origin master ---> waht will this do?
+git commit will commit the changes to your repo!
+git push/pull?
