@@ -1,19 +1,24 @@
 import {createStackNavigator} from 'react-navigation-stack'
 import {createAppContainer} from 'react-navigation'
 
-import Home from '../Screens/Home';
+import Login from '../Screens/Login';
 import Register from '../Screens/Register';
+import Home from '../Screens/Home';
 
 
 // navigation prop is passed down to all our screen components.
 const HomeStack = createStackNavigator({
 // Top Screen is showed by default
-    HomeScreen: {
-        screen: Home,
+    Login: {
+        screen: Login,
     },
 
-    RegisterScreen: {
+    Register: {
         screen: Register
+    },
+
+    Home: {
+        screen: Home
     }
 })
 
