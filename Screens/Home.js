@@ -6,7 +6,7 @@ function Home({ navigation }){
     return(
         <View>
             <Text> This is the Home Page</Text>
-            <Button title="Why am i here?" onPress={() => navigation.navigate("Login")} />
+            <Text>user name {navigation.state.params.number}</Text>
         </View>
     )
 }
