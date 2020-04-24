@@ -4,3 +4,7 @@ git remote origin master ---> waht will this do?
 git commit will commit the changes to your repo!
 git push/pull?
 
+-- Before pulling a req from online server
+git stash
+git stash pop --> merge the files
+git stash drop --> drop the last stash?
