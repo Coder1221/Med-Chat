@@ -7,7 +7,7 @@ function Home({ navigation }){
     return(
         <View>
             <Text> This is the Home Page</Text>
-            <Text>user name UserName</Text>
+            <Text>This is the object passed "{navigation.state.params}" </Text>
         </View>
     )
 }
