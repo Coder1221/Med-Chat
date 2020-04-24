@@ -10,10 +10,43 @@ function Login({ navigation }){
     const [phoneNumber ,setPhoneNumber]=useState('+16505551234')  //Phone Number
     const [confirm, setConfirm] = useState(null);   //onfirms the phone  for phone Number
     const [code, setCode] = useState('123456'); // confirmation code (phone) from the user
-    const [userName, setUserName] = useState('')
-    const [password, setPassword] = useState('')
+    const [userName, setUserName] = useState('tester')
+    const [password, setPassword] = useState('givenpassword')
     const [user, setUser] = useState(null);  //   Gets the current signed in user
 
+
+    // Method to fetch our own apis
+async function LoginMongoDB(method, username=null, password=null, phone=null){
+    try{
+        console.log('Db')
+
+        let packet = {
+            'method' : method,
+        }
+        if(method=='phone')
+            packet.phoneNumber = phone
+
+        else{
+            packet.username = username
+            packet.password = password
+        }
+
+        const response = await fetch('https://medchatse.herokuapp.com/login', {
+            method: 'POST',
+            headers:{
+                'Content-type' : 'application/json',
+            },
+            body: JSON.stringify(packet)
+        })
+        const json = await response.json()
+        console.log("JSON Returned: ", json)
+        console.log("Type of json: ", typeof(json))
+        setUser(json)
+        navigation.navigate('Home', response)
+    } catch(error){
+        console.log(error)
+    }
+}
 
     // Used for PhoneAuth
     async function signInWithPhoneNumber(phoneNumber){
@@ -33,18 +66,14 @@ function Login({ navigation }){
             console.log('confirmed', conf)
             //Phone Number Verified so a request can be sent to the server to fetch data
             if (conf){
-                const response = await LoginMongoDB('server', 'tester', 'godmodefortestingservershouldbeon')
-                // user will take vals from the server
-                setUser(response)
-                // {'user': response, 'key':123} Can Pass in JSON objs
-                navigation.navigate('Home', response)
+                LoginMongoDB('phone','user','pass', phoneNumber)
             }
             else{
                 alert('Invalid Verification Code')
             }             
             
         } catch (err) {
-            alert('Enter Phone Number Again!')
+            alert(err)
             console.log('confirmCodeERR: ', err)
         }
     }
@@ -89,7 +118,7 @@ function Login({ navigation }){
                     />        
                 <Button 
                     title="LogIn" 
-                    onPress={() => console.log(userName, password)}
+                    onPress={() => LoginMongoDB('server', userName, password)}
                     />
                 <Button 
                     title="Register" 
@@ -123,28 +152,6 @@ function signOut(){
         .then(() => console.log('User signed out!: '))
 }
 
-// Method to fetch our own apis
-async function LoginMongoDB(method, username, password){
-    try{
-        console.log('Db')
-        const response = await fetch('https://medchatse.herokuapp.com/login', {
-            method: 'POST',
-            headers:{
-                'Content-type' : 'application/json',
-            },
-            body: JSON.stringify({
-                'method' : method,
-                'username' : username,
-                'password' : password,
-            })
-        })
-        const json = await response.json()
-        console.log("JSON Returned: ", json)
-        return json;
-    } catch{
-        console.log(error)
-        return null
-    }
-}
+
 
 export default Login

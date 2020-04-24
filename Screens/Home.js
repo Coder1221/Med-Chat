@@ -7,7 +7,8 @@ function Home({ navigation }){
     return(
         <View>
             <Text> This is the Home Page</Text>
-            <Text>This is the object passed "{navigation.state.params}" </Text>
+            <Text>Welcome Unknown fellow need response fron server!</Text>
+            {/* <Text>{typeof(navigation.state.params)==='object'?navigation.state.params.message: navigation.state.params}  </Text> */}
         </View>
     )
 }
