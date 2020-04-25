@@ -2,6 +2,8 @@ import React, {useState, }from 'react'
 import {View, Text, Button, StyleSheet} from 'react-native'
 import { TextInput } from 'react-native-gesture-handler';
 
+// import CheckBox from '@react-native-community/checkbox';
+
 
 function Register({ navigation }){
     const [firstName, setFirstName] = useState('')
@@ -10,9 +12,11 @@ function Register({ navigation }){
     const [password, setPassword] = useState('')
     const [phoneNumber, setPhoneNumber] = useState('')
     const [email, setEmail] = useState('')
-    const [pic, setPic] = useState('')
-    const [diseaseHist, setDiseaseHist]= useState('')
+    const [pic, setPic] = useState('none')
+    const [drDisease, setDrDisease]= useState([]) //Diseases the person has helped other people with
+    const [patientDisease, setPatientDisease]= useState([]) // Diseases the person wants help with
     const [bday, setBday]= useState('')
+    // booleans for dynamic changes in the borders of the input (No time for a better workaround)
     const [validFName, setValidFName] = useState(true)
     const [validLName, setValidLName] = useState(true)
     const [validUName, setValidUName] = useState(true)
@@ -21,9 +25,9 @@ function Register({ navigation }){
     const [validEmail, setValidEmail] = useState(true)
     const [validBday, setValidBday] = useState(true)
     const [validAll, setValidAll] = useState(false)
+    const [validDoctor, setValidDoctor] = useState(false)
+    const [validPatient, setValidPatient] = useState(false)
  
-
-
     
     // validates all inputs before sending to Server
     function ValidateAndSend(){
@@ -43,9 +47,6 @@ function Register({ navigation }){
             validBday ) setValidAll(true)
         else setValidAll(false)
 
-        if(validAll){
-
-        }
     }
 
     // Checks the input at client side before sending it to the server
@@ -141,6 +142,9 @@ function Register({ navigation }){
                 style={validBday?styles.inputBox:styles.error}
                 />
             
+            <Text>Join the Community as:</Text>
+            {/* <CheckBox value={validDoctor} onChange={() => setValidDoctor(!validDoctor)} />
+            <Text>Doctor</Text> */}
             <Button 
                 title='Register'
                 onPress={()=> ValidateAndSend()}
