@@ -7,39 +7,96 @@ import auth from '@react-native-firebase/auth';
 // navigation prop is passed down to all our screen components frfom the stack container
 function Login({ navigation }){
     // If null, no SMS has been sent
-    const [phoneNumber ,setPhoneNumber]=useState('+16505551234')    //Phone Number
-    const [confirm, setConfirm] = useState(null);   //confirm code for phone Number
+    const [phoneNumber ,setPhoneNumber]=useState('+16505551234')  //Phone Number
+    const [confirm, setConfirm] = useState(null);   //onfirms the phone  for phone Number
     const [code, setCode] = useState('123456'); // confirmation code (phone) from the user
-    const [userName, setUserName] = useState('')
-    const [password, setPassword] = useState('')
+    const [userName, setUserName] = useState('tester')
+    const [password, setPassword] = useState('givenpassword')
+    const [user, setUser] = useState(null);  //   Gets the current signed in user
 
-    // Handle the button press
-    async function signInWithPhoneNumber(phoneNumber) {
+
+    // Method to fetch our own apis
+async function LoginMongoDB(method, username=null, password=null, phone=null){
+    try{
+        console.log('Db')
+
+        let packet = {
+            'method' : method,
+        }
+        if(method=='phone')
+            packet.phoneNumber = phone
+
+        else{
+            packet.username = username
+            packet.password = password
+        }
+
+        const response = await fetch('https://medchatse.herokuapp.com/login', {
+            method: 'POST',
+            headers:{
+                'Content-type' : 'application/json',
+            },
+            body: JSON.stringify(packet)
+        })
+        const json = await response.json()
+        console.log("JSON Returned: ", json)
+        console.log("Type of json: ", typeof(json))
+        setUser(json)
+        navigation.navigate('Home', response)
+    } catch(error){
+        console.log(error)
+    }
+}
+
+    // Used for PhoneAuth
+    async function signInWithPhoneNumber(phoneNumber){
         try{
-            const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
-            setConfirm(confirmation);
-            console.log('ConfirmationReturn: ', confirmation)
+            const verification = await auth().signInWithPhoneNumber(phoneNumber);
+            setConfirm(verification);
+            setUser({'phoneNumber': phoneNumber})
         }catch(err){
-            console.log('Error in SignInWithPhoneNumber: ')
-            console.log(err)
+            alert(err)
+            console.log('signInPhoneERR: ', err)
         }
     }
 
     async function confirmCode() {
         try {
             const conf =  await confirm.confirm(code);
-            console.log('Conf Code: ', conf)
-            if(conf){
-                navigation.navigate('Home', { "number": phoneNumber })
+            console.log('confirmed', conf)
+            //Phone Number Verified so a request can be sent to the server to fetch data
+            if (conf){
+                LoginMongoDB('phone','user','pass', phoneNumber)
             }
-        } catch (error) {
-            alert('Invalid code.')
-            console.log('Invalid code.');
+            else{
+                alert('Invalid Verification Code')
+            }             
+            
+        } catch (err) {
+            alert(err)
+            console.log('confirmCodeERR: ', err)
         }
     }
 
+    // This function keeps updating user values (whenever auth() is called)
+    function onAuthStateChanged(user) {
+        console.log('settingUser: ', user)
+        setUser(user);
+      }
 
-    if (!confirm){
+    // UseEffect is run after each render...?
+    //The same componentWillUnmount job can be achieved by optionally returning
+    // a function from our useEffect() parameter:
+    useEffect(()=>{
+        console.log('UseEffect ', user)
+        // setPhoneNumber('+16505551234')
+        // console.log("UserEffect-->user.displayName:", user.displayName)
+        // const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+        // return subscriber; // unsubscribe on unmount
+    }, [user])
+
+    // Assuming the user is signed out, if there is no display name...?
+    if (!user){
         return(
             <View>
                 <Text>Login Screen</Text>
@@ -55,13 +112,13 @@ function Login({ navigation }){
                     value={password}    
                     />
                 <TextInput 
-                    placeholder='PhoneNumber("+16505551234")'
+                    placeholder='phone("+16505551234")'
                     value= {phoneNumber} 
                     onChangeText = {Text=>setPhoneNumber(Text) } 
-                    />                
+                    />        
                 <Button 
                     title="LogIn" 
-                    onPress={() => console.log(userName, password)}
+                    onPress={() => LoginMongoDB('server', userName, password)}
                     />
                 <Button 
                     title="Register" 
@@ -74,26 +131,27 @@ function Login({ navigation }){
             </View>
         );
     }
-    else{
-        return(
-            // If the user is already logged IN? re route to HomeScreen
-            // CallHome Screen here and do all this in HomeScreen
-            <View>
-                <Text>Implement Home Screen!</Text>
-                <TextInput placeholder = 'Enter the code' value ={code} onChangeText={text=>setCode(text)}/>
-                <Button title = 'Submit code' onPress={()=>confirmCode() }/>
-                <Button title='Back' onPress={()=>{setConfirm(false); console.log('confirm set to false')}} />
-            </View>
-        )
-    }   
+    // Only phone is authentic 
+    
+    return(
+        // If the user is already logged IN? re route to HomeScreen
+        // CallHome Screen here and do all this in HomeScreen
+        <View>
+            <Text>Enter the code below!</Text>
+            <TextInput placeholder = 'Enter the code' value={code} onChangeText={text=>setCode(text)}/>
+            <Button title = 'Submit code' onPress={()=>confirmCode() }/>
+            <Button title='Back' onPress={()=>{setUser(null)}} />
+        </View>
+    )
+    
 }
 
-async function LoginMongoDB(method='server', username, password){
-    try{
-        let response = await fetch('https://medchatse.herokuapp.com/login')
-    } catch{
+function signOut(){
+    auth()
+        .signOut()
+        .then(() => console.log('User signed out!: '))
+}
 
-    }
- }
+
 
 export default Login

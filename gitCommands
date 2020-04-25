@@ -8,3 +8,6 @@ git push/pull?
 git stash
 git stash pop --> merge the files
 git stash drop --> drop the last stash?
+
+build apk
+cd android && ./gradlew assembleRelease

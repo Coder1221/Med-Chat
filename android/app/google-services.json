@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "45878387137-iapesne4t1p9qdpnllj8mhss9pvekebq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.medchat",
+            "certificate_hash": "07aa62fb22ff011895490ca1597183a0d793955b"
+          }
+        },
+        {
           "client_id": "45878387137-cn5981lsd5gusie85uo95glmobb0629g.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
