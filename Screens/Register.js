@@ -24,9 +24,9 @@ function Register(){
     const [validPhone, setValidPhone] = useState(true)
     const [validEmail, setValidEmail] = useState(true)
     const [validBday, setValidBday] = useState(true)
-    const [validAll, setValidAll] = useState(false)
     const [validDoctor, setValidDoctor] = useState(false)
     const [validPatient, setValidPatient] = useState(false)
+    const [validAll, setValidAll] = useState(true)
  
     
     // validates all inputs before sending to Server
@@ -128,7 +128,7 @@ function Register(){
         }
         else if(type=='bday'){
             setBday(text)
-            const check = /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/
+            const check = /^\d{4}(\-)(((0)[0-9])|((1)[0-2]))(\-)([0-2][0-9]|(3)[0-1])$/
             setValidBday(check.test(text))
         }
     }
@@ -175,7 +175,7 @@ function Register(){
                     style={validEmail?styles.inputBox:styles.error}
                     />
                 <TextInput 
-                    placeholder='Birth Day (dd/mm/yyyy)'
+                    placeholder='Birth Day (yyyy-mm-dd)'
                     value={bday}
                     onChangeText={(text)=> validateInput(text, 'bday')}
                     style={validBday?styles.inputBox:styles.error}
