@@ -36,14 +36,14 @@ async function LoginMongoDB(method, username=null, password=null, phone=null){
             },
             body: JSON.stringify(packet)
         })
-        const profileInfo = await response.json()
-        console.log("JSON Returned: ", profileInfo)
-        if(!profileInfo.message)
-            navigation.navigate('Home', profileInfo)
+        const respJson = await response.json()
+        console.log("JSON Returned: ", respJson)
+        if(!respJson.message)
+            navigation.navigate('Home', respJson)
         else
-            alert(profileInfo)
+            alert("ResponseFromServer: ",respJson)
     }catch(error){
-        alert(error)
+        alert("Error from Server: ",error)
         console.log(error)
     }
 }
