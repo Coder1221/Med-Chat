@@ -1,63 +1,65 @@
 
 import React, { useState, useEffect, Component } from 'react';
-
 import {
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
+  Alert,
+  Button,
 } from 'react-native';
 
 function Main({ navigation }) {
 
-  state = {
-    name: 'Johnss',
-  };
-
   const [name,setName] =useState('')
+  const [unique_id ,setid]=useState('')
+  const [user_State , setState]= useState(['0','1','1','1','0','1','1','1','0','0','1','1']) // o and 1 wether a user is a part of that channel or not
 
- function  onPress(){
-  console.log('navigated')
-  navigation.navigate('Chat', { name: name });
-}
+  const [count,setCount]=useState(['1','1','91','1','1','100','1','1','1','190','1','1']) // count of each channel
+  const [selected_channel , set_channel]=useState('')
+  const [Channels ,setChannels]=useState(['Cancer', 'Asthma', 'Diabetes' ,'Cough', 'Bood Pressure' , 'Teeth Cavity','Heart' , 'Acane','Depression' ,'Lungs Infection','Vision','Ear_Pain'])
 
-    return (
-    <View>
-      <Text style={styles.title}>Enter your name:</Text>
-      <TextInput
-        style={styles.nameInput}
-        placeHolder="John Cen1a"
-        onChangeText={txt=>setName(txt)}
-        value={name}
-      />
-      <TouchableOpacity onPress={onPress}>
-        <Text style={styles.buttonText}>Next</Text>
-      </TouchableOpacity>
-    </View>
+
+  useEffect(()=>{
+    // handle all hooks here
+    // name hook
+    // unique id hook
+    // each channel count how many members are there
+    // list of channelse which user have joined 
+    
+    // setName(navigation.state.prams.name)
+    console.log('effect caled')
+  })
+  
+ 
+  function handle_database(x, index){
+    set_channel(index)
+    // handle here wether the  user that seleted the cahnnel is part of that or not 
+    // x is the name of the channel 
+    // handle user wann join it then commit to data base
+   
+    if(user_State[index]==='0'){ //not a part of channels
+        alert('WANNA join this channel')
+        // commit this user to data base
+
+      // NAvigate them to chat screen
+      // navigation.navigate('Chat', {name: name , id :unique_id , channel_number : selected_channel}); 
+    }else{
+      navigation.navigate('Chat', {name: name , id :unique_id , channel_number : selected_channel});
+    }
+
+    
+  }
+  
+  return (
+    <>
+    <View>{Channels.map((item, index)=>(
+      <Button title={item+' ->  '+count[index]+'JOINED STATE->'+user_State[index]}  onPress ={()=>handle_database(item ,index)}/>
+    ))}</View>
+
+    </>
   );
 }
-
-const offset = 24;
-
-const styles = StyleSheet.create({
-  title: {
-    marginTop: offset,
-    marginLeft: offset,
-    fontSize: offset,
-  },
-  nameInput: {
-    height: offset * 2,
-
-    margin: offset,
-    paddingHorizontal: offset,
-    borderColor: '#111111',
-    borderWidth: 1,
-  },
-  buttonText: {
-    marginLeft: offset,
-    fontSize: offset,
-  },
-});
 
 export default Main;

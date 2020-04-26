@@ -1,50 +1,25 @@
-import firebase from 'firebase'; // 4.8.1
-
+import firebase from './Screens/firebase_auth'
 class Fire {
   constructor() {
-    this.init();
     this.observeAuth();
+    this.DataBase= ''
   }
-
-  init = () =>
-    firebase.initializeApp({
-      apiKey: "AIzaSyCKECd_gDdmw1nDmyBqYbGHgOW4DatIhUU",
-      authDomain: "medchat-e1838.firebaseapp.com",
-      databaseURL: "https://medchat-e1838.firebaseio.com",
-      projectId: "medchat-e1838",
-      storageBucket: "medchat-e1838.appspot.com",
-      messagingSenderId: "79684443301",
-      appId: "1:79684443301:web:0ed026f2532de3ea52014c",
-      measurementId: "G-TV7P7E63F8"
-    });
-
   observeAuth = () =>
     firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
 
   onAuthStateChanged = user => {
-    if (!user) {
-      try {
-        firebase.auth().signInAnonymously();
-      } catch ({ message }) {
-        alert(message);
-      }
-    }
+    firebase.auth().signInAnonymously();
   };
 
-  get uid() {
-    return (firebase.auth().currentUser || {}).uid;
-  }
-
-  get ref() {
-
-    return firebase.database().ref('messages'); // retunr channels according to selection of user if 
-    // return firebase.database().ref('channel')
+  ref_database = ()=>{
+    return firebase.database().ref(this.DataBase); 
   }
 
   parse = snapshot => {
     const { timestamp: numberStamp, text, user } = snapshot.val();
     const { key: _id } = snapshot;
     const timestamp = new Date(numberStamp);
+
     const message = {
       _id,
       timestamp,
@@ -54,14 +29,17 @@ class Fire {
     return message;
   };
 
-  on = callback =>
-    this.ref
-      .limitToLast(20)
-      .on('child_added', snapshot => callback(this.parse(snapshot)));
+  select_data_base= text=>{
+    this.DataBase=text
+  }
 
+  on = callback =>
+    this.ref_database().on('child_added', snapshot => callback(this.parse(snapshot)));
+  
   get timestamp() {
     return firebase.database.ServerValue.TIMESTAMP;
   }
+  
   // send the message to the Backend
   send = messages => {
     for (let i = 0; i < messages.length; i++) {
@@ -74,14 +52,12 @@ class Fire {
       this.append(message);
     }
   };
-
-  append = message => this.ref.push(message);
+  append = message => this.ref_database(this.DataBase).push(message);
 
   // close the connection to the Backend
   off() {
-    this.ref.off();
+    this.ref_database(this.DataBase).off();
   }
 }
-
 Fire.shared = new Fire();
 export default Fire;
