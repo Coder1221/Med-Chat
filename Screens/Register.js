@@ -1,22 +1,21 @@
 import React, {useState, }from 'react'
-import {View, Text, Button, StyleSheet, ScrollView} from 'react-native'
+import {View, Text, Button, StyleSheet, Image, ScrollView} from 'react-native'
 import { TextInput } from 'react-native-gesture-handler';
-
+import ImagePicker from 'react-native-image-picker';
 import CheckBox from '@react-native-community/checkbox';
 
-
-function Register(){
+function Register({ navigation }){
     const [firstName, setFirstName] = useState(null)
     const [lastName, setLastName]= useState('')
     const [userName, setUserName]= useState('')
     const [password, setPassword] = useState('')
     const [phoneNumber, setPhoneNumber] = useState('')
     const [email, setEmail] = useState('')
-    const [pic, setPic] = useState('none')
     const [drDisease, setDrDisease]= useState('') //Diseases the person has helped other people with
     const [patientDisease, setPatientDisease]= useState('') // Diseases the person wants help with
     const [bday, setBday]= useState('')
     // booleans for dynamic changes in the borders of the input (No time for a better workaround)
+    const [pic, setPic] = useState(false) // picture val
     const [validFName, setValidFName] = useState(true)
     const [validLName, setValidLName] = useState(true)
     const [validUName, setValidUName] = useState(true)
@@ -27,7 +26,6 @@ function Register(){
     const [validDoctor, setValidDoctor] = useState(false)
     const [validPatient, setValidPatient] = useState(false)
     const [validAll, setValidAll] = useState(true)
- 
     
     // validates all inputs before sending to Server
     async function ValidateAndSend(){
@@ -36,14 +34,14 @@ function Register(){
         validateInput(userName, 'userName')
         validateInput(password, 'password')
         validateInput(phoneNumber, 'phoneNumber')
-        validateInput(email, 'email')
+        // validateInput(email, 'email') ---> made optional
         validateInput(bday, 'bday')
-        if( validEmail && validFName && validLName && validUName && validPass && validPhone && validBday){
+        if(  validFName && validLName && validUName && validPass && validPhone && validBday){
             setValidAll(true)
         }else{
             setValidAll(false)
         }
-
+        
         // if all of the conditions are fulfilled we can send the packet to the server
         if (validAll){
             let packet = {
@@ -73,8 +71,10 @@ function Register(){
             })
             const respJson = await response.json()
             console.log("JSON returned: ", respJson)
+
             try{
                 alert(respJson.message)
+                navigation.pop() // will move back to Login Screen after a succesful Registration
             }catch(err){
                 alert(err)
             }
@@ -126,53 +126,81 @@ function Register(){
         }
     }
 
+    function UploadImage() {
+        // An options obj need to be passed to the img lib.
+        const options = {
+            noData : true,
+        }
+        ImagePicker.launchImageLibrary(options, response => {
+            console.log('Response: ', response)
+            if(response.uri){
+                setPic(response)
+            }
+            else if (response.error){
+                alert(response.error)
+            }
+        })
+        
+    }
+
     return(
         <View>
             <ScrollView>
                 <Text>Welcome to RegisterScreen</Text>
+                <View style={{ justifyContent: 'center', alignItems: 'center'}}>
+                    <Image 
+                        style={{width:100, height:100, borderRadius:100, resizeMode:'cover'}} 
+                        source={pic? {uri : pic.uri} : require('../imgs/empty_profile.png')}
+                    />
+                    <Button 
+                        style={{flex:1, textAlign:'center', color:'blue'}}
+                        onPress={()=>UploadImage()}
+                        title='Upload Image'
+                    ></Button>
+                </View>
                 <TextInput 
-                    placeholder='First Name (start with a letter, can contain alphanumeric afterwards)' 
+                    placeholder='First Name (letters only)' 
                     value={firstName} 
                     onChangeText={(text)=> validateInput(text, 'fName')}
                     style={validFName?styles.inputBox:styles.error}
-                    />
+                />
                 <TextInput 
                     placeholder='Last Name (letters only)' 
                     value={lastName}
                     onChangeText={(text)=> validateInput(text, 'lName')}
                     style={validLName?styles.inputBox:styles.error}
-                    />
+                />
                 <TextInput 
-                    placeholder='User Name (letters only)' 
+                    placeholder='User Name (start with a letter, can contain alphanumeric afterwards)' 
                     value={userName}
                     onChangeText={(text)=> validateInput(text, 'userName')}
                     style={validUName?styles.inputBox:styles.error}
-                    />
+                />
                 <TextInput 
                     placeholder='Password (Atleast 5 digits long)' 
-                    // secureTextEntry={true} 
+                    secureTextEntry={true} 
                     value={password}
                     onChangeText={(text)=> validateInput(text, 'password')}
                     style={validPass?styles.inputBox:styles.error}
-                    />
+                />
                 <TextInput 
                     placeholder='Phone Number (+92[10 more digits])' 
                     value={phoneNumber}
                     onChangeText={(text)=> validateInput(text, 'phoneNumber')}
                     style={validPhone?styles.inputBox:styles.error}
-                    />
+                />
                 <TextInput 
-                    placeholder='Email'
+                    placeholder='* Email * (Optional)'
                     value={email}
                     onChangeText={(text)=> validateInput(text, 'email')}
                     style={validEmail?styles.inputBox:styles.error}
-                    />
+                />
                 <TextInput 
                     placeholder='Birth Day (yyyy-mm-dd)'
                     value={bday}
                     onChangeText={(text)=> validateInput(text, 'bday')}
                     style={validBday?styles.inputBox:styles.error}
-                    />
+                />
                 
                 <TextInput 
                     placeholder='* Diseases you can help with * (Optional Entry)'
@@ -185,8 +213,7 @@ function Register(){
                     value={patientDisease}
                     onChangeText={text => setPatientDisease(text)}
                     style={styles.inputBox}
-                    />
-                <Text> For now the value of pic is '{pic}'</Text>
+                />
                 <Text>Join the Community as:</Text>
                 <View style={{ flexDirection: 'row'}}>
                     <CheckBox value={validDoctor} onChange={() => setValidDoctor(!validDoctor)} />

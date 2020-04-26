@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Component } from 'react';
-import {View, Text, Button, StyleSheet} from 'react-native';
+import {View, Text, Button, Image, StyleSheet} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import auth from '@react-native-firebase/auth';
 
@@ -7,11 +7,11 @@ import auth from '@react-native-firebase/auth';
 // navigation prop is passed down to all our screen components frfom the stack container
 function Login({ navigation }){
     // If null, no SMS has been sent
-    const [phoneNumber ,setPhoneNumber]=useState('+16505551234')  //Phone Number
+    const [phoneNumber ,setPhoneNumber]=useState('')  //Phone Number +16505551234
     const [confirm, setConfirm] = useState(null);   //onfirms the phone  for phone Number
-    const [code, setCode] = useState('123456'); // confirmation code (phone) from the user
-    const [userName, setUserName] = useState('tester')
-    const [password, setPassword] = useState('godmodefortestingservershouldbeon')
+    const [code, setCode] = useState(''); // confirmation code (phone) from the user 123456
+    const [userName, setUserName] = useState('') // tester
+    const [password, setPassword] = useState('') // godmodefortestingservershouldbeon
 
 
     // Method to fetch our own apis
@@ -41,7 +41,7 @@ async function LoginMongoDB(method, username=null, password=null, phone=null){
         if(!respJson.message)
             navigation.navigate('Main', respJson)
         else
-            alert("ResponseFromServer: ",respJson)
+            alert(respJson.message)
     }catch(error){
         alert("Error from Server: ",error)
         console.log(error)
@@ -74,7 +74,6 @@ async function LoginMongoDB(method, username=null, password=null, phone=null){
             else{
                 alert('Invalid Verification Code')
             }             
-            
         } catch (err) {
             alert(err)
             console.log('confirmCodeERR: ', err)
@@ -99,12 +98,6 @@ async function LoginMongoDB(method, username=null, password=null, phone=null){
                     value={password}
                     style={styles.inputBox}
                     />
-                <TextInput 
-                    placeholder='phone("+16505551234")'
-                    value= {phoneNumber} 
-                    onChangeText = {Text=>setPhoneNumber(Text)} 
-                    style={styles.inputBox}
-                    />        
                 <Button 
                     title="LogIn" 
                     onPress={() => LoginMongoDB('server', userName, password)}
@@ -112,6 +105,12 @@ async function LoginMongoDB(method, username=null, password=null, phone=null){
                 <Button 
                     title="Register" 
                     onPress={() => navigation.navigate("Register")}
+                    />
+                <TextInput 
+                    placeholder='Phone ("+923458726443")'
+                    value= {phoneNumber} 
+                    onChangeText = {Text=>setPhoneNumber(Text)} 
+                    style={styles.inputBox}
                     />
                 <Button
                     title="Phone Number Sign In"
