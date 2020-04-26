@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Component } from 'react';
-import {View, Text, Button} from 'react-native';
+import {View, Text, Button, StyleSheet} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import auth from '@react-native-firebase/auth';
 
@@ -11,15 +11,13 @@ function Login({ navigation }){
     const [confirm, setConfirm] = useState(null);   //onfirms the phone  for phone Number
     const [code, setCode] = useState('123456'); // confirmation code (phone) from the user
     const [userName, setUserName] = useState('tester')
-    const [password, setPassword] = useState('givenpassword')
-    const [user, setUser] = useState(null);  //   Gets the current signed in user
+    const [password, setPassword] = useState('godmodefortestingservershouldbeon')
 
 
     // Method to fetch our own apis
 async function LoginMongoDB(method, username=null, password=null, phone=null){
     try{
-        console.log('Db')
-
+        
         let packet = {
             'method' : method,
         }
@@ -30,7 +28,7 @@ async function LoginMongoDB(method, username=null, password=null, phone=null){
             packet.username = username
             packet.password = password
         }
-
+        console.log(packet)
         const response = await fetch('https://medchatse.herokuapp.com/login', {
             method: 'POST',
             headers:{
@@ -38,12 +36,14 @@ async function LoginMongoDB(method, username=null, password=null, phone=null){
             },
             body: JSON.stringify(packet)
         })
-        const json = await response.json()
-        console.log("JSON Returned: ", json)
-        console.log("Type of json: ", typeof(json))
-        setUser(json)
-        navigation.navigate('Home', response)
-    } catch(error){
+        const respJson = await response.json()
+        console.log("JSON Returned: ", respJson)
+        if(!respJson.message)
+            navigation.navigate('Home', respJson)
+        else
+            alert("ResponseFromServer: ",respJson)
+    }catch(error){
+        alert("Error from Server: ",error)
         console.log(error)
     }
 }
@@ -53,7 +53,6 @@ async function LoginMongoDB(method, username=null, password=null, phone=null){
         try{
             const verification = await auth().signInWithPhoneNumber(phoneNumber);
             setConfirm(verification);
-            setUser({'phoneNumber': phoneNumber})
         }catch(err){
             alert(err)
             console.log('signInPhoneERR: ', err)
@@ -66,7 +65,11 @@ async function LoginMongoDB(method, username=null, password=null, phone=null){
             console.log('confirmed', conf)
             //Phone Number Verified so a request can be sent to the server to fetch data
             if (conf){
-                LoginMongoDB('phone','user','pass', phoneNumber)
+                await LoginMongoDB('phone','user','pass', phoneNumber)
+
+                // The user is signed in after verfying the confirm code.
+                // So we need to sign out the user from fire_base.
+                auth().signOut().then(console.log('sigend_out...?'))
             }
             else{
                 alert('Invalid Verification Code')
@@ -78,43 +81,29 @@ async function LoginMongoDB(method, username=null, password=null, phone=null){
         }
     }
 
-    // This function keeps updating user values (whenever auth() is called)
-    function onAuthStateChanged(user) {
-        console.log('settingUser: ', user)
-        setUser(user);
-      }
-
-    // UseEffect is run after each render...?
-    //The same componentWillUnmount job can be achieved by optionally returning
-    // a function from our useEffect() parameter:
-    useEffect(()=>{
-        console.log('UseEffect ', user)
-        // setPhoneNumber('+16505551234')
-        // console.log("UserEffect-->user.displayName:", user.displayName)
-        // const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-        // return subscriber; // unsubscribe on unmount
-    }, [user])
-
     // Assuming the user is signed out, if there is no display name...?
-    if (!user){
+    if (!confirm){
         return(
             <View>
                 <Text>Login Screen</Text>
                 <TextInput 
                     placeholder='Username'
                     onChangeText={(text) => setUserName(text)}
-                    value={userName}    
+                    value={userName}
+                    style={styles.inputBox}
                     />
                 <TextInput 
                     placeholder='Password' 
                     secureTextEntry={true}
                     onChangeText={(text) => setPassword(text)}
-                    value={password}    
+                    value={password}
+                    style={styles.inputBox}
                     />
                 <TextInput 
                     placeholder='phone("+16505551234")'
                     value= {phoneNumber} 
-                    onChangeText = {Text=>setPhoneNumber(Text) } 
+                    onChangeText = {Text=>setPhoneNumber(Text)} 
+                    style={styles.inputBox}
                     />        
                 <Button 
                     title="LogIn" 
@@ -131,8 +120,8 @@ async function LoginMongoDB(method, username=null, password=null, phone=null){
             </View>
         );
     }
-    // Only phone is authentic 
     
+    // Only phone is authentic 
     return(
         // If the user is already logged IN? re route to HomeScreen
         // CallHome Screen here and do all this in HomeScreen
@@ -140,18 +129,16 @@ async function LoginMongoDB(method, username=null, password=null, phone=null){
             <Text>Enter the code below!</Text>
             <TextInput placeholder = 'Enter the code' value={code} onChangeText={text=>setCode(text)}/>
             <Button title = 'Submit code' onPress={()=>confirmCode() }/>
-            <Button title='Back' onPress={()=>{setUser(null)}} />
+            <Button title='Back' onPress={()=>{setConfirm(null)}} />
         </View>
     )
-    
 }
 
-function signOut(){
-    auth()
-        .signOut()
-        .then(() => console.log('User signed out!: '))
-}
-
-
+const styles = StyleSheet.create({
+    inputBox : {
+        borderWidth:1,
+        marginBottom: 1,
+    }
+})
 
 export default Login
