@@ -44,7 +44,7 @@ function Register(){
             setValidAll(false)
         }
 
-        // if all of the conditions are fulfilled we can send the packet to hte server
+        // if all of the conditions are fulfilled we can send the packet to the server
         if (validAll){
             let packet = {
                 "firstName" : firstName,
@@ -77,7 +77,7 @@ function Register(){
                 alert(respJson.message)
             }catch(err){
                 alert(err)
-            }   
+            }
         }
     }
     // Checks the input at client side before sending it to the server

@@ -39,7 +39,7 @@ async function LoginMongoDB(method, username=null, password=null, phone=null){
         const respJson = await response.json()
         console.log("JSON Returned: ", respJson)
         if(!respJson.message)
-            navigation.navigate('Home', respJson)
+            navigation.navigate('Main', respJson)
         else
             alert("ResponseFromServer: ",respJson)
     }catch(error){
