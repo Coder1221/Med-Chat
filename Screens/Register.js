@@ -6,7 +6,7 @@ import CheckBox from '@react-native-community/checkbox';
 
 
 function Register(){
-    const [firstName, setFirstName] = useState('')
+    const [firstName, setFirstName] = useState(null)
     const [lastName, setLastName]= useState('')
     const [userName, setUserName]= useState('')
     const [password, setPassword] = useState('')
@@ -38,16 +38,12 @@ function Register(){
         validateInput(phoneNumber, 'phoneNumber')
         validateInput(email, 'email')
         validateInput(bday, 'bday')
-        if( validEmail && 
-            validFName &&
-            validLName &&
-            validUName &&
-            validPass &&
-            validPhone &&
-            validBday ) setValidAll(true)
-                
-        else setValidAll(false)
-        console.log("all:valid?: ",validAll)
+        if( validEmail && validFName && validLName && validUName && validPass && validPhone && validBday){
+            setValidAll(true)
+        }else{
+            setValidAll(false)
+        }
+
         // if all of the conditions are fulfilled we can send the packet to hte server
         if (validAll){
             let packet = {
@@ -66,7 +62,6 @@ function Register(){
                     "patientDisease" : [patientDisease]
                 }
             }
-
             console.log(packet)
             const response = await fetch('https://medchatse.herokuapp.com/signUp', {
                 method: 'POST',
@@ -79,14 +74,12 @@ function Register(){
             const respJson = await response.json()
             console.log("JSON returned: ", respJson)
             try{
-                if(respJson.message == "Registered Succesfully!")
-                alert('Registration Successful!')
+                alert(respJson.message)
             }catch(err){
                 alert(err)
             }   
         }
     }
-
     // Checks the input at client side before sending it to the server
     function validateInput(text, type){
         // starts with a letter, can contain alphanumeric afterwards

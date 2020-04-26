@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Component } from 'react';
-import {View, Text, Button} from 'react-native';
+import {View, Text, Button, StyleSheet} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import auth from '@react-native-firebase/auth';
 
@@ -89,18 +89,21 @@ async function LoginMongoDB(method, username=null, password=null, phone=null){
                 <TextInput 
                     placeholder='Username'
                     onChangeText={(text) => setUserName(text)}
-                    value={userName}    
+                    value={userName}
+                    style={styles.inputBox}
                     />
                 <TextInput 
                     placeholder='Password' 
                     secureTextEntry={true}
                     onChangeText={(text) => setPassword(text)}
                     value={password}
+                    style={styles.inputBox}
                     />
                 <TextInput 
                     placeholder='phone("+16505551234")'
                     value= {phoneNumber} 
-                    onChangeText = {Text=>setPhoneNumber(Text) } 
+                    onChangeText = {Text=>setPhoneNumber(Text)} 
+                    style={styles.inputBox}
                     />        
                 <Button 
                     title="LogIn" 
@@ -131,5 +134,11 @@ async function LoginMongoDB(method, username=null, password=null, phone=null){
     )
 }
 
+const styles = StyleSheet.create({
+    inputBox : {
+        borderWidth:1,
+        marginBottom: 1,
+    }
+})
 
 export default Login
