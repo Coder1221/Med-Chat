@@ -12,12 +12,6 @@ import Chat from '../Screens/Chat';
 // navigation prop is passed down to all our screen components.
 const HomeStack = createStackNavigator({
 // Top Screen is showed by default
-    Main:{
-        screen:Main
-    },
-    Chat:{
-        screen:Chat,
-    },
     Login: {
         screen: Login,
     },
@@ -25,10 +19,16 @@ const HomeStack = createStackNavigator({
     Register: {
         screen: Register
     },
-
     Home: {
         screen: Home
-    }
+    },
+
+    Main:{
+        screen:Main
+    },
+    Chat:{
+        screen:Chat,
+    },
 })
 
 export default createAppContainer(HomeStack);
