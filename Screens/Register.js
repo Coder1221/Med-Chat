@@ -5,125 +5,135 @@ import ImagePicker from 'react-native-image-picker';
 import CheckBox from '@react-native-community/checkbox';
 
 function Register({ navigation }){
-    const [firstName, setFirstName] = useState(null)
-    const [lastName, setLastName]= useState('')
-    const [userName, setUserName]= useState('')
-    const [password, setPassword] = useState('')
-    const [phoneNumber, setPhoneNumber] = useState('')
-    const [email, setEmail] = useState('')
+    // String array ==> fName, lName, uName, password, phone, email, bday --> 
+    const [profile, setProfile] = useState(['','','','','','',''])
+    // const [firstName, setFirstName] = useState(null)
+    // const [lastName, setLastName]= useState('')
+    // const [userName, setUserName]= useState('')
+    // const [password, setPassword] = useState('')
+    // const [phoneNumber, setPhoneNumber] = useState('')
+    // const [email, setEmail] = useState('')
+    // const [bday, setBday]= useState('')
+    const [isDoctor, setIsDoctor] = useState(false)
+    const [isPatient, setIsPatient] = useState(false)
     const [drDisease, setDrDisease]= useState('') //Diseases the person has helped other people with
     const [patientDisease, setPatientDisease]= useState('') // Diseases the person wants help with
-    const [bday, setBday]= useState('')
-    // booleans for dynamic changes in the borders of the input (No time for a better workaround)
     const [pic, setPic] = useState(false) // picture val
-    const [validFName, setValidFName] = useState(true)
-    const [validLName, setValidLName] = useState(true)
-    const [validUName, setValidUName] = useState(true)
-    const [validPass, setValidPass] = useState(true)
-    const [validPhone, setValidPhone] = useState(true)
-    const [validEmail, setValidEmail] = useState(true)
-    const [validBday, setValidBday] = useState(true)
-    const [validDoctor, setValidDoctor] = useState(false)
-    const [validPatient, setValidPatient] = useState(false)
-    const [validAll, setValidAll] = useState(true)
+    // boolean array ==> fName, lName, uName, password, phone, email, bday,
+    const [validStates, setValidStates] = useState([1,1,1,1,1,1,1])
+    const [validAll, setValidAll] = useState(true) // This becomes tru when all required elements are true 
     
     // validates all inputs before sending to Server
     async function ValidateAndSend(){
-        validateInput(firstName, 'fName')
-        validateInput(lastName, 'lName')
-        validateInput(userName, 'userName')
-        validateInput(password, 'password')
-        validateInput(phoneNumber, 'phoneNumber')
+        let valArr = []
+        valArr.push(validateInput(firstName, 'fName'))
+        valArr.push(validateInput(lastName, 'lName'))
+        valArr.push(validateInput(userName, 'userName'))
+        valArr.push(validateInput(password, 'password'))
+        valArr.push(validateInput(phoneNumber, 'phoneNumber'))
         // validateInput(email, 'email') ---> made optional
-        validateInput(bday, 'bday')
-        if(  validFName && validLName && validUName && validPass && validPhone && validBday){
-            setValidAll(true)
-        }else{
-            setValidAll(false)
-        }
+        valArr.push(validateInput(bday, 'bday'))
         
+        // Check Validity of all inputs. If any input doesn't match the format return from the function
+        valArr.forEach(val => {
+            if(!val){
+                setValidAll(false)
+                return
+            }
+        })
+        setValidAll(true)
         // if all of the conditions are fulfilled we can send the packet to the server
-        if (validAll){
-            let packet = {
-                "firstName" : firstName,
-                "lastName" : lastName,
-                "username" : userName,
-                "password" : password,
-                "profilePicture" : pic,
-                "email" : "",
-                "phoneNumber" : phoneNumber,
-                "birthday" : bday,
-                "diseaseHistory" : {
-                    "isPatient" : validPatient,
-                    "isDoctor" : validDoctor,
-                    "doctorDiseases" : [drDisease],
-                    "patientDisease" : [patientDisease]
-                }
+        
+        let packet = {
+            "firstName" : profile[0],
+            "lastName" : profile[1],
+            "username" : profile[2],
+            "password" : profile[3],
+            "phoneNumber" : profile[4],
+            "email" : profile[5],
+            "birthday" : profile[6],
+            "profilePicture" : pic,
+            "diseaseHistory" : {
+                "isPatient" : isDoctor,
+                "isDoctor" : isPatient,
+                "doctorDiseases" : [drDisease],
+                "patientDisease" : [patientDisease]
             }
-            console.log(packet)
-            const response = await fetch('https://medchatse.herokuapp.com/signUp', {
-                method: 'POST',
-                headers:{
-                    Accept : 'application/json',
-                    'Content-type' : 'application/json',
-                },
-                body: JSON.stringify(packet)
-            })
-            const respJson = await response.json()
-            console.log("JSON returned: ", respJson)
+        }
+        console.log(packet)
+        const response = await fetch('https://medchatse.herokuapp.com/signUp', {
+            method: 'POST',
+            headers:{
+                Accept : 'application/json',
+                'Content-type' : 'application/json',
+            },
+            body: JSON.stringify(packet)
+        })
+        const respJson = await response.json()
+        console.log("JSON returned: ", respJson)
 
-            try{
-                alert(respJson.message)
-                navigation.pop() // will move back to Login Screen after a succesful Registration
-            }catch(err){
-                alert(err)
-            }
+        try{
+            alert(respJson.message)
+            navigation.pop() // will move back to Login Screen after a succesful Registration
+        }catch(err){
+            alert(err)
         }
     }
     // Checks the input at client side before sending it to the server
     function validateInput(text, type){
-        // starts with a letter, can contain alphanumeric afterwards
-        if(type == 'userName'){
-            setUserName(text)
+        let prevValidArr = validStates.slice()
+        let prevProfileArr = profile.slice()
+                
+        // fName
+        if(type == 0){
+            const check = /[a-zA-Z]+$/ // contains only letters 
+            prevProfileArr[0] = text
+            prevValidArr[0] = check.test(text)
+        }
+        // lName
+        else if(type == 1){
+            const check = /[a-zA-Z]+$/  // contains only letters
+            prevProfileArr[1] = text
+            prevValidArr[1] = check.test(text)
+        }
+        // 'userName'
+        else if(type == 2){
             const check = /^[a-zA-Z]\w*$/
-            setValidUName(check.test(text))
+            prevProfileArr[2] = text
+            prevValidArr[2] = check.test(text)
         }
-        // contains only letters
-        else if(type == 'fName'){
-            setFirstName(text)
-            const check = /[a-zA-Z]+$/
-            setValidFName(check.test(text))
+        // 'password'
+        else if(type== 3){
+            const check = /.{5,}/   // must be atleast 5 chars long
+            prevProfileArr[3] = text
+            prevValidArr[3] = check.test(text)
         }
-        // contains only letters
-        else if(type == 'lName'){
-            setLastName(text)
-            const check = /[a-zA-Z]+$/
-            setValidLName(check.test(text))
-        }
-        // must be atleast 5 chars long
-        else if(type=='password'){
-            setPassword(text)
-            const check = /.{5,}/
-            setValidPass(check.test(text))
-        }
-        // covers valid email styles
-        else if(type=='email'){
-            setEmail(text)
-            // Taken from internet
-            const check = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/
-            setValidEmail(check.test(text))
-        }
-        // for now +92[PakistaniNumbers]
-        else if(type=='phoneNumber'){
-            setPhoneNumber(text)
+
+        // 'phoneNumber' for now +92[PakistaniNumbers]
+        else if(type== 4){
             const check = /\+92[0-9]{10}$/
-            setValidPhone(check.test(text))
+            prevProfileArr[4] = text
+            prevValidArr[4] = check.test(text)
         }
-        else if(type=='bday'){
-            setBday(text)
+        
+        // 'email'
+        else if(type==5){
+            // Taken from internet covers valid email styles
+            const check = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/
+            prevProfileArr[5] = text
+            prevValidArr[5] = check.test(text)
+        }
+
+        // 'bday'
+        else if(type== 6){
             const check = /^\d{4}(\-)(((0)[0-9])|((1)[0-2]))(\-)([0-2][0-9]|(3)[0-1])$/
-            setValidBday(check.test(text))
+            prevProfileArr[6] = text
+            prevValidArr[6] = check.test(text)
         }
+
+        setProfile(prevProfileArr)
+        setValidStates(prevValidArr)
+        return prevValidArr[type]
     }
 
     function UploadImage() {
@@ -152,54 +162,54 @@ function Register({ navigation }){
                         style={{width:100, height:100, borderRadius:100, resizeMode:'cover'}} 
                         source={pic? {uri : pic.uri} : require('../imgs/empty_profile.png')}
                     />
-                    <Button 
+                    <Button
                         style={{flex:1, textAlign:'center', color:'blue'}}
                         onPress={()=>UploadImage()}
                         title='Upload Image'
                     ></Button>
                 </View>
-                <TextInput 
-                    placeholder='First Name (letters only)' 
-                    value={firstName} 
-                    onChangeText={(text)=> validateInput(text, 'fName')}
-                    style={validFName?styles.inputBox:styles.error}
+                <TextInput
+                    placeholder='First Name (letters only)'
+                    value={profile[0]} 
+                    onChangeText={(text)=> validateInput(text, 0)}
+                    style={validStates[0]?styles.inputBox:styles.error}
                 />
-                <TextInput 
-                    placeholder='Last Name (letters only)' 
-                    value={lastName}
-                    onChangeText={(text)=> validateInput(text, 'lName')}
-                    style={validLName?styles.inputBox:styles.error}
+                <TextInput
+                    placeholder='Last Name (letters only)'
+                    value={profile[1]}
+                    onChangeText={(text)=> validateInput(text, 1)}
+                    style={validStates[1]?styles.inputBox:styles.error}
                 />
                 <TextInput 
                     placeholder='User Name (start with a letter, can contain alphanumeric afterwards)' 
-                    value={userName}
-                    onChangeText={(text)=> validateInput(text, 'userName')}
-                    style={validUName?styles.inputBox:styles.error}
+                    value={profile[2]}
+                    onChangeText={(text)=> validateInput(text, 2)}
+                    style={validStates[2]?styles.inputBox:styles.error}
                 />
                 <TextInput 
                     placeholder='Password (Atleast 5 digits long)' 
                     secureTextEntry={true} 
-                    value={password}
-                    onChangeText={(text)=> validateInput(text, 'password')}
-                    style={validPass?styles.inputBox:styles.error}
+                    value={profile[3]}
+                    onChangeText={(text)=> validateInput(text, 3)}
+                    style={validStates[3]?styles.inputBox:styles.error}
                 />
                 <TextInput 
                     placeholder='Phone Number (+92[10 more digits])' 
-                    value={phoneNumber}
-                    onChangeText={(text)=> validateInput(text, 'phoneNumber')}
-                    style={validPhone?styles.inputBox:styles.error}
+                    value={profile[4]}
+                    onChangeText={(text)=> validateInput(text, 4)}
+                    style={validStates[4]?styles.inputBox:styles.error}
                 />
                 <TextInput 
                     placeholder='* Email * (Optional)'
-                    value={email}
-                    onChangeText={(text)=> validateInput(text, 'email')}
-                    style={validEmail?styles.inputBox:styles.error}
+                    value={profile[5]}
+                    onChangeText={(text)=> validateInput(text, 5)}
+                    style={validStates[5]?styles.inputBox:styles.error}
                 />
                 <TextInput 
                     placeholder='Birth Day (yyyy-mm-dd)'
-                    value={bday}
-                    onChangeText={(text)=> validateInput(text, 'bday')}
-                    style={validBday?styles.inputBox:styles.error}
+                    value={profile[6]}
+                    onChangeText={(text)=> validateInput(text, 6)}
+                    style={validStates[6]?styles.inputBox:styles.error}
                 />
                 
                 <TextInput 
@@ -214,11 +224,11 @@ function Register({ navigation }){
                     onChangeText={text => setPatientDisease(text)}
                     style={styles.inputBox}
                 />
-                <Text>Join the Community as:</Text>
+                <Text>Join the community as:</Text>
                 <View style={{ flexDirection: 'row'}}>
-                    <CheckBox value={validDoctor} onChange={() => setValidDoctor(!validDoctor)} />
+                    <CheckBox value={isDoctor} onChange={() => setisDoctor(!isDoctor)} />
                     <Text style={{marginTop: 5}}>Doctor</Text>
-                    <CheckBox value={validPatient} onChange={() => setValidPatient(!validPatient)} />
+                    <CheckBox value={isPatient} onChange={() => setisPatient(!isPatient)} />
                     <Text style={{marginTop: 5}}>Patient</Text>
                 </View>
                 <Button 
