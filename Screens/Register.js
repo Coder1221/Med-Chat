@@ -4,25 +4,26 @@ import { TextInput } from 'react-native-gesture-handler';
 import ImagePicker from 'react-native-image-picker';
 import CheckBox from '@react-native-community/checkbox';
 
+import MultiSelect from 'react-native-multiple-select';
+
+import diseaseList from './INITIALIZE_DISEASES.js'
+
 function Register({ navigation }){
     // String array ==> fName, lName, uName, password, phone, email, bday --> 
     const [profile, setProfile] = useState(['','','','','','','',])
-    const [userType, setUserType] = useState([false,false])
-    // const [isDoctor, setIsDoctor] = useState(false)
-    // const [isPatient, setIsPatient] = useState(false)
-    const [drDisease, setDrDisease]= useState('') //Diseases the person has helped other people with
-    const [patientDisease, setPatientDisease]= useState('') // Diseases the person wants help with
+    // Doctor,Patient --> checkBox values
+    const [userType, setUserType] = useState([false,false]) 
+    const [selectedDiseases, setSelectedDiseases] = useState('')
+    const [multiSelect, setMultiSelect] = useState('')
     const [pic, setPic] = useState(false) // picture val
     // boolean array ==> fName, lName, uName, password, phone, email, bday, isDoctor, isPatient, isNeither
     const [validStates, setValidStates] = useState([1,1,1,1,1,1,1])
-    const [validAll, setValidAll] = useState(true) // This becomes tru when all required elements are true 
-    // ['Cancer', 'Asthma', 'Diabetes' ,'Cough', 'Bood Pressure' , 'Teeth Cavity','Heart' , 'Acane','Depression' ,'Lungs Infection','Vision','Ear_Pain']
-    
-    
+    // This becomes tru when all required elements are true 
+    const [validAll, setValidAll] = useState(true) 
 
     // Updates the checkboxes of UserType ==> Doctor or patient
     function SelectUserType(entryNumber){
-        prevUserType = userType.slice()
+        let prevUserType = userType.slice()
         console.log(prevUserType)
         for(let i=0; i<prevUserType.length; i++){
             if(i==entryNumber)
@@ -53,8 +54,16 @@ function Register({ navigation }){
             }
         })
         setValidAll(true)
+
+        // Sending the channel numbers (Diesease id. Not the disease name.)
+        let doctorDiseases = []
+        let patientDisease = []
+        if(userType[0]) //Doctor
+            doctorDiseases = selectedDiseases
+        else if (userType[1])
+            patientDisease = selectedDiseases
+
         // if all of the conditions are fulfilled we can send the packet to the server
-        
         let packet = {
             "firstName" : profile[0],
             "lastName" : profile[1],
@@ -67,8 +76,8 @@ function Register({ navigation }){
             "diseaseHistory" : {
                 "isDoctor" : userType[0],
                 "isPatient" : userType[1],
-                "doctorDiseases" : [drDisease],
-                "patientDisease" : [patientDisease]
+                "doctorDiseases" : doctorDiseases,
+                "patientDisease" : patientDisease
             }
         }
         console.log(packet)
@@ -142,7 +151,6 @@ function Register({ navigation }){
             prevValidArr[6] = check.test(text)
         }
 
-
         setProfile(prevProfileArr)
         setValidStates(prevValidArr)
         return prevValidArr[type]
@@ -165,6 +173,7 @@ function Register({ navigation }){
         
     }
 
+    // const { selectedItems } = this.state;
     return(
         <View>
             <ScrollView>
@@ -224,24 +233,41 @@ function Register({ navigation }){
                     style={validStates[6]?styles.inputBox:styles.error}
                 />
                 
-                <TextInput 
-                    placeholder='* Diseases you can help with * (Optional Entry)'
-                    value={drDisease}
-                    onChangeText={text => setDrDisease(text)}
-                    style={styles.inputBox}
-                    />
-                <TextInput 
-                    placeholder='* Diseases you have * (Optional Entry)'
-                    value={patientDisease}
-                    onChangeText={text => setPatientDisease(text)}
-                    style={styles.inputBox}
-                />
                 <Text>Join the community as:</Text>
                 <View style={{ flexDirection: 'row'}}>
                     <CheckBox value={userType[0]} onChange={() => SelectUserType(0)} />
                     <Text style={{marginTop: 5}}>Doctor</Text>
                     <CheckBox value={userType[1]} onChange={() => SelectUserType(1)} />
                     <Text style={{marginTop: 5}}>Patient</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                    <MultiSelect
+                    hideTags
+                    hideDropdown
+                    items={diseaseList}
+                    uniqueKey="id"
+                    ref={(component) =>  setMultiSelect(component)}
+                    onSelectedItemsChange={ items =>  setSelectedDiseases(items)}
+                    selectedItems={selectedDiseases}
+                    selectText="Diesease channels you want to join"
+                    searchInputPlaceholderText="Search for a disease"
+                    onChangeInput={ (text)=> console.log(text)}
+                    altFontFamily="ProximaNova-Light"
+                    tagRemoveIconColor="#CCC"
+                    tagBorderColor="#CCC"
+                    tagTextColor="#CCC"
+                    selectedItemTextColor="#CCC"
+                    selectedItemIconColor="#CCC"
+                    itemTextColor="#000"
+                    displayKey="name"
+                    searchInputStyle={{ color: '#CCC' }}
+                    submitButtonColor="#008B8B"
+                    submitButtonText="Submit"
+                    />
+                    <View>
+                        {/* This shows the selected diseases on the screen */}
+                        {selectedDiseases? multiSelect.getSelectedItemsExt(selectedDiseases): null}
+                    </View>
                 </View>
                 <Button 
                     title='Register'
