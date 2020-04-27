@@ -1,88 +1,62 @@
 import React, { useState, useEffect, Component } from 'react';
-import {Text, Button} from 'react-native'
+import {Text, Button ,ActivityIndicator} from 'react-native'
 import { GiftedChat } from 'react-native-gifted-chat';
 import Fire from '../Fire';
 import { cond } from 'react-native-reanimated';
+GiftedChat.renderLoading=true
 
+export default class Chat extends Component<props>{
+  state = {
+    messages: [],
+    database:'',
+    user:'',
+    unique_id:'',
+    loading:true
+  };
 
-function Chat({navigation}){
-  const[message_of_channels , set_mg]=useState(['test','test2'])
-  const[_id ,setid]=useState('testing-1') //dummy
-  const[name,setname]=useState('')
-  const[channel ,setchannel]=useState('messages')//dummy
-  
-  useEffect(()=>{
-    // setid(navigation.state.params.unique_id)
-    // setname(navigation.state.params.name)
-    // setchannel(navigation.state.params.selected_channel)
-     
-      Fire.shared.select_data_base(channel)
-     
-      Fire.shared.on(message =>
-      this.setState(previousState => ({
-        messages: GiftedChat.append(previousState.messages, message),
-      }))
-      );
-
-  
-  })
-  function user() {
-    return {
-      name:'Guest1' , //name of user get from db
-      _id: 'testing',  //unique id of each user get from db
-    };
-  }
+  componentDidMount() {  /// this compent will fetch all prevoius messages from chat
+   
+    GiftedChat.renderLoading=true
+    this.database=this.props.navigation.state.params.channel_name
+    this.user=this.props.navigation.state.params.name
+    this.unique_id =this.props.navigation.state.params.id
     
 
-  return(
-    <>
-    <Text>we are here</Text>
- 
-    <GiftedChat
+    // Fire.shared.select_data_base(this.database)
+    Fire.shared.select_data_base('messages_1_1')
+
+    Fire.shared.on(message =>this.setState(previousState => ({
+        messages: GiftedChat.append(previousState.messages, message),
+        loading:  false
+    })));
+    
+    console.log(this.state.messages)
+  }
+
+
+  componentWillUnmount() {
+    Fire.shared.off();
+  }
+
+  render() {
+    if (this.state.loading) {
+        this.state.loading == true ? <ActivityIndicator size="large" color="#0000ff" /> :<ActivityIndicator />
+    }
+    return (
+      <GiftedChat
+        renderLoading={() =>  <ActivityIndicator size="large" color="#0000ff" />}
+        // onLoadEarlier={() =>  <ActivityIndicator size="large" color="#0000ff" />}
         messages={this.state.messages}
+        renderLoading={() => this.state.loading == true ? <ActivityIndicator size="large" color="#0000ff" /> :<ActivityIndicator />}
         onSend={Fire.shared.send}
-        user={user}/>
-  </>
-  );
+        onPressAvatar={(user)=>this.props.navigation.navigate('Profile',{us:user})}
+        isTyping
+        renderTime
+        // showUserAvatar
+        renderUsernameOnMessage
+        user={ {name:'dd1',_id:'testing_2',avatar: 'https://placeimg.com/140/140/any'} }  //change this line
+        
+      /> 
+    );
+  }
 }
-export default Chat;
-
-// export default class Chat extends Component<props>{
-//   state = {
-//     messages: [],
-//   };
-
-//   get user() {
-//     return {
-//       name:'Guest1' , //name of user get from db
-//       _id: 'testing',  //unique id of each user get from db
-//     };
-//   }
-
-  
-//   componentDidMount() {  /// this compent will fetch all prevoius messages from chat
-   
-//     Fire.shared.select_data_base('messages')
-
-//     Fire.shared.on(message =>
-//     this.setState(previousState => ({
-//       messages: GiftedChat.append(previousState.messages, message),
-//     }))
-//     ); 
-//   }
-  
-
-//   componentWillUnmount() {
-//     Fire.shared.off(); // 
-//   }
-//   render() {
-//     return (
-//       <GiftedChat
-//         messages={this.state.messages}
-//         onSend={Fire.shared.send}
-//         user={this.user}
-//       /> 
-//     );
-//   }
-// }
-

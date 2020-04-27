@@ -34,7 +34,7 @@ function Main({ navigation }) {
   
  
   function handle_database(x, index){
-    set_channel(index)
+    set_channel(x)
     // handle here wether the  user that seleted the cahnnel is part of that or not 
     // x is the name of the channel 
     // handle user wann join it then commit to data base
@@ -46,7 +46,7 @@ function Main({ navigation }) {
       // NAvigate them to chat screen
       // navigation.navigate('Chat', {name: name , id :unique_id , channel_number : selected_channel}); 
     }else{
-      navigation.navigate('Chat', {name: name , id :unique_id , channel_number : selected_channel});
+      navigation.navigate('Chat', {name: name , id :unique_id , channel_name : selected_channel});
     }
 
     
