@@ -11,6 +11,8 @@ import {
   ScrollView,
 } from 'react-native';
 
+import auth from '@react-native-firebase/auth';
+
 function Main({ navigation }) {
 
   const [name,setName] =useState('')
@@ -50,24 +52,26 @@ function Main({ navigation }) {
       navigation.navigate('Chat', {name: name , id :unique_id , channel_number : selected_channel});
     }
 
-    
   }
   
   return (
     <>
     <ScrollView>
-    <View style={styles.initial}>
-    <View style={styles.buttonview}>{Channels.map((item, index)=>(
-      <Button title={item+' ->  '+count[index]+'JOINED STATE->'+user_State[index]}  onPress ={()=>handle_database(item ,index)}
-      color="#8155BA"
-      marginTop='10'
-      />
-      
-    ))}
-    <View style={styles.separator} />
-    </View>
-  </View>
-  </ScrollView>
+      <View style={styles.initial}>
+        <View style={styles.buttonview}>{Channels.map((item, index)=>(
+          <Button title={item+' ->  '+count[index]+'JOINED STATE->'+user_State[index]}  onPress ={()=>handle_database(item ,index)}
+          color="#8155BA"
+          marginTop='10'
+        />
+        ))}
+        <View style={styles.separator} />
+        </View>
+        <Button 
+          title='Sign Out'
+          onPress={()=> auth().signOut().then(console.log('sigend_out...?'))}
+        />
+      </View>
+    </ScrollView>
     </>
   );
 }

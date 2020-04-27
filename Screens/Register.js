@@ -49,7 +49,6 @@ function Register({ navigation }){
         valArr.forEach(val => {
             if(!val){
                 setValidAll(false)
-                console.log("here`")
                 return
             }
         })
@@ -94,7 +93,8 @@ function Register({ navigation }){
 
         try{
             alert(respJson.message)
-            navigation.pop() // will move back to Login Screen after a succesful Registration
+            if(respJson.message == "Registration Successful!")
+                navigation.pop() // will move back to Login Screen after a succesful Registration
         }catch(err){
             alert(err)
         }
@@ -180,15 +180,17 @@ function Register({ navigation }){
             <ImageBackground source={require('../imgs/login_background.jpeg')} style={styles.image}>
                     <Text style={{color:"#8155BA", fontSize:20, fontStyle:'normal'}}>Welcome to MedChat </Text>
                     <View style={{ justifyContent: 'center', alignItems: 'center'}}>
-                        <Image 
+                        <Image
                             style={{width:100, height:100, borderRadius:100, resizeMode:'cover'}} 
                             source={pic? {uri : pic.uri} : require('../imgs/empty_profile.png')}
                         />
-                        <Button
-                            style={{flex:1, textAlign:'center', color:'blue'}}
-                            onPress={()=>UploadImage()}
-                            title='Upload Image'
-                        ></Button>
+                        <View style={{borderBottomLeftRadius:50, borderTopLeftRadius:50, borderBottomRightRadius:50, borderTopRightRadius:50, overflow:'hidden', width:'50%',}}>
+                            <Button
+                                color= '#8155BA'
+                                onPress={()=>UploadImage()}
+                                title='Upload Image'
+                            />
+                        </View>
                     </View>
                     <TextInput
                         placeholder='First Name (letters only)'
@@ -270,23 +272,28 @@ function Register({ navigation }){
                             {selectedDiseases? multiSelect.getSelectedItemsExt(selectedDiseases): null}
                         </View>
                     </View>
-                    <Button 
-                        title='Register'
-                        onPress={()=> ValidateAndSend()}
-                    />
+                    <View style={styles.buttonView}>
+                        <Button  
+                            title='Register'
+                            color= '#8155BA'
+                            onPress={()=> ValidateAndSend()}
+                        />
+                    </View>
+                    
                     {validAll ? null : <Text>The values in red blocks are not in correct format!</Text>}
                 </ImageBackground>
             </ScrollView>
         </View>
     )
-
 }
 
 const styles = StyleSheet.create({
     image: {
         flex: 1,
-        resizeMode: "cover",
-        justifyContent: "center"
+        // resizeMode: "cover",
+        // justifyContent: "center",
+        // alignSelf: 'stretch',
+        width: null,
       },
     inputBox: {
         borderWidth: 1,
@@ -297,6 +304,17 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'red',
         marginBottom: 1,
+    },
+    buttonView: {
+        borderBottomLeftRadius:50,
+        borderTopLeftRadius:50,
+        borderBottomRightRadius:50,
+        borderTopRightRadius:50,
+        overflow:'hidden',
+        width:'80%',
+        marginLeft:40,
+        marginBottom:5,
+        marginTop: 10
     }
 })
 

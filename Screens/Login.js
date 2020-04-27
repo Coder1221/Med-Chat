@@ -7,11 +7,11 @@ import auth from '@react-native-firebase/auth';
 // navigation prop is passed down to all our screen components frfom the stack container
 function Login({ navigation }){
     // If null, no SMS has been sent
-    const [phoneNumber ,setPhoneNumber]=useState('+16505551234')  //Phone Number
+    const [phoneNumber ,setPhoneNumber]=useState('+16505551234')  //Phone Number +16505551234
     const [confirm, setConfirm] = useState(null);   //onfirms the phone  for phone Number
-    const [code, setCode] = useState('123456'); // confirmation code (phone) from the user
-    const [userName, setUserName] = useState('tester')
-    const [password, setPassword] = useState('godmodefortestingservershouldbeon')
+    const [code, setCode] = useState(''); // confirmation code (phone) from the user 123456
+    const [userName, setUserName] = useState('') // tester
+    const [password, setPassword] = useState('') // godmodefortestingservershouldbeon
 
 
     // Method to fetch our own apis
@@ -41,7 +41,7 @@ async function LoginMongoDB(method, username=null, password=null, phone=null){
         if(!respJson.message)
             navigation.navigate('Main', respJson)
         else
-            alert(respJson)
+            alert(respJson.message)
     }catch(error){
         alert(error)
         console.log(error)
@@ -69,7 +69,7 @@ async function LoginMongoDB(method, username=null, password=null, phone=null){
 
                 // The user is signed in after verfying the confirm code.
                 // So we need to sign out the user from fire_base.
-                auth().signOut().then(console.log('sigend_out...?'))
+                // auth().signOut().then(console.log('sigend_out...?'))
             }
             else{
                 alert('Invalid Verification Code')
@@ -86,8 +86,8 @@ async function LoginMongoDB(method, username=null, password=null, phone=null){
         return(
             <View style={styles.initial}>
                 <ImageBackground source={require('../imgs/login_background.jpeg')} style={styles.image}>
-                    <Image 
-                        style = {{width:50, height:50}}
+                    <Image
+                        style = {styles.logo}
                         source={require('../imgs/logo.jpeg')}
                     />
                     <Text style={styles.textformat}>Log In</Text>
@@ -145,11 +145,16 @@ async function LoginMongoDB(method, username=null, password=null, phone=null){
     return(
         // If the user is already logged IN? re route to HomeScreen
         // CallHome Screen here and do all this in HomeScreen
-        <View>
-            <Text>Enter the code below!</Text>
-            <TextInput placeholder = 'Enter the code' value={code} onChangeText={text=>setCode(text)}/>
-            <Button title = 'Submit code' onPress={()=>confirmCode() }/>
-            <Button title='Back' onPress={()=>{setConfirm(null)}} />
+        <View style={styles.initial}>
+            <ImageBackground source={require('../imgs/login_background.jpeg')} style={styles.image}>
+                <TextInput placeholder = 'Enter the code' value={code} onChangeText={text=>setCode(text)}/>
+                <View style={styles.buttonview}>
+                    <Button title = 'Submit code' onPress={()=>confirmCode()} color="#8155BA"/>
+                </View>
+                <View style={styles.buttonview}>
+                    <Button title='Back' onPress={()=> setConfirm(null)} color="#8155BA" />
+                </View>
+            </ImageBackground>
         </View>
     )
 }
@@ -170,6 +175,11 @@ const styles = StyleSheet.create({
     initial : {
         // backgroundColor:'#EED6D3',
         flex:1
+    },
+    logo : {
+        width:125,
+        height:125,
+        marginLeft:125
     },
     textformat : {
         textAlign:'left',
