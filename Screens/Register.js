@@ -6,16 +6,33 @@ import CheckBox from '@react-native-community/checkbox';
 
 function Register({ navigation }){
     // String array ==> fName, lName, uName, password, phone, email, bday --> 
-    const [profile, setProfile] = useState(['','','','','','',''])
-    const [isDoctor, setIsDoctor] = useState(false)
-    const [isPatient, setIsPatient] = useState(false)
+    const [profile, setProfile] = useState(['','','','','','','',])
+    const [userType, setUserType] = useState([false,false])
+    // const [isDoctor, setIsDoctor] = useState(false)
+    // const [isPatient, setIsPatient] = useState(false)
     const [drDisease, setDrDisease]= useState('') //Diseases the person has helped other people with
     const [patientDisease, setPatientDisease]= useState('') // Diseases the person wants help with
     const [pic, setPic] = useState(false) // picture val
-    // boolean array ==> fName, lName, uName, password, phone, email, bday,
+    // boolean array ==> fName, lName, uName, password, phone, email, bday, isDoctor, isPatient, isNeither
     const [validStates, setValidStates] = useState([1,1,1,1,1,1,1])
     const [validAll, setValidAll] = useState(true) // This becomes tru when all required elements are true 
+    // ['Cancer', 'Asthma', 'Diabetes' ,'Cough', 'Bood Pressure' , 'Teeth Cavity','Heart' , 'Acane','Depression' ,'Lungs Infection','Vision','Ear_Pain']
     
+    
+
+    // Updates the checkboxes of UserType ==> Doctor or patient
+    function SelectUserType(entryNumber){
+        prevUserType = userType.slice()
+        console.log(prevUserType)
+        for(let i=0; i<prevUserType.length; i++){
+            if(i==entryNumber)
+                prevUserType[i] = !prevUserType[i]
+            else
+                prevUserType[i] = false
+        }
+        setUserType(prevUserType)
+    }
+
     // validates all inputs before sending to Server
     async function ValidateAndSend(){
         let valArr = []
@@ -48,8 +65,8 @@ function Register({ navigation }){
             "birthday" : profile[6],
             "profilePicture" : pic,
             "diseaseHistory" : {
-                "isPatient" : isDoctor,
-                "isDoctor" : isPatient,
+                "isDoctor" : userType[0],
+                "isPatient" : userType[1],
                 "doctorDiseases" : [drDisease],
                 "patientDisease" : [patientDisease]
             }
@@ -124,6 +141,7 @@ function Register({ navigation }){
             prevProfileArr[6] = text
             prevValidArr[6] = check.test(text)
         }
+
 
         setProfile(prevProfileArr)
         setValidStates(prevValidArr)
@@ -220,9 +238,9 @@ function Register({ navigation }){
                 />
                 <Text>Join the community as:</Text>
                 <View style={{ flexDirection: 'row'}}>
-                    <CheckBox value={isDoctor} onChange={() => setIsDoctor(!isDoctor)} />
+                    <CheckBox value={userType[0]} onChange={() => SelectUserType(0)} />
                     <Text style={{marginTop: 5}}>Doctor</Text>
-                    <CheckBox value={isPatient} onChange={() => setIsPatient(!isPatient)} />
+                    <CheckBox value={userType[1]} onChange={() => SelectUserType(1)} />
                     <Text style={{marginTop: 5}}>Patient</Text>
                 </View>
                 <Button 
