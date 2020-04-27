@@ -7,13 +7,6 @@ import CheckBox from '@react-native-community/checkbox';
 function Register({ navigation }){
     // String array ==> fName, lName, uName, password, phone, email, bday --> 
     const [profile, setProfile] = useState(['','','','','','',''])
-    // const [firstName, setFirstName] = useState(null)
-    // const [lastName, setLastName]= useState('')
-    // const [userName, setUserName]= useState('')
-    // const [password, setPassword] = useState('')
-    // const [phoneNumber, setPhoneNumber] = useState('')
-    // const [email, setEmail] = useState('')
-    // const [bday, setBday]= useState('')
     const [isDoctor, setIsDoctor] = useState(false)
     const [isPatient, setIsPatient] = useState(false)
     const [drDisease, setDrDisease]= useState('') //Diseases the person has helped other people with
@@ -26,18 +19,19 @@ function Register({ navigation }){
     // validates all inputs before sending to Server
     async function ValidateAndSend(){
         let valArr = []
-        valArr.push(validateInput(firstName, 'fName'))
-        valArr.push(validateInput(lastName, 'lName'))
-        valArr.push(validateInput(userName, 'userName'))
-        valArr.push(validateInput(password, 'password'))
-        valArr.push(validateInput(phoneNumber, 'phoneNumber'))
-        // validateInput(email, 'email') ---> made optional
-        valArr.push(validateInput(bday, 'bday'))
+        valArr.push(validateInput(profile[0], 0))
+        valArr.push(validateInput(profile[1], 1))
+        valArr.push(validateInput(profile[2], 2))
+        valArr.push(validateInput(profile[3], 3))
+        valArr.push(validateInput(profile[4], 4))
+        // validateInput(email, 5) ---> made optional
+        valArr.push(validateInput(profile[6], 6))
         
         // Check Validity of all inputs. If any input doesn't match the format return from the function
         valArr.forEach(val => {
             if(!val){
                 setValidAll(false)
+                console.log("here`")
                 return
             }
         })
@@ -226,9 +220,9 @@ function Register({ navigation }){
                 />
                 <Text>Join the community as:</Text>
                 <View style={{ flexDirection: 'row'}}>
-                    <CheckBox value={isDoctor} onChange={() => setisDoctor(!isDoctor)} />
+                    <CheckBox value={isDoctor} onChange={() => setIsDoctor(!isDoctor)} />
                     <Text style={{marginTop: 5}}>Doctor</Text>
-                    <CheckBox value={isPatient} onChange={() => setisPatient(!isPatient)} />
+                    <CheckBox value={isPatient} onChange={() => setIsPatient(!isPatient)} />
                     <Text style={{marginTop: 5}}>Patient</Text>
                 </View>
                 <Button 
