@@ -1,5 +1,5 @@
 import React, {useState, }from 'react'
-import {View, Text, Button, StyleSheet, Image, ScrollView} from 'react-native'
+import {View, Text, Button, StyleSheet, Image, ImageBackground, ScrollView} from 'react-native'
 import { TextInput } from 'react-native-gesture-handler';
 import ImagePicker from 'react-native-image-picker';
 import CheckBox from '@react-native-community/checkbox';
@@ -55,7 +55,7 @@ function Register({ navigation }){
         })
         setValidAll(true)
 
-        // Sending the channel numbers (Diesease id. Not the disease name.)
+        // Sending the channel numbers (Diesease id. Not the disease)
         let doctorDiseases = []
         let patientDisease = []
         if(userType[0]) //Doctor
@@ -177,103 +177,105 @@ function Register({ navigation }){
     return(
         <View>
             <ScrollView>
-                <Text>Welcome to RegisterScreen</Text>
-                <View style={{ justifyContent: 'center', alignItems: 'center'}}>
-                    <Image 
-                        style={{width:100, height:100, borderRadius:100, resizeMode:'cover'}} 
-                        source={pic? {uri : pic.uri} : require('../imgs/empty_profile.png')}
-                    />
-                    <Button
-                        style={{flex:1, textAlign:'center', color:'blue'}}
-                        onPress={()=>UploadImage()}
-                        title='Upload Image'
-                    ></Button>
-                </View>
-                <TextInput
-                    placeholder='First Name (letters only)'
-                    value={profile[0]} 
-                    onChangeText={(text)=> validateInput(text, 0)}
-                    style={validStates[0]?styles.inputBox:styles.error}
-                />
-                <TextInput
-                    placeholder='Last Name (letters only)'
-                    value={profile[1]}
-                    onChangeText={(text)=> validateInput(text, 1)}
-                    style={validStates[1]?styles.inputBox:styles.error}
-                />
-                <TextInput 
-                    placeholder='User Name (start with a letter, can contain alphanumeric afterwards)' 
-                    value={profile[2]}
-                    onChangeText={(text)=> validateInput(text, 2)}
-                    style={validStates[2]?styles.inputBox:styles.error}
-                />
-                <TextInput 
-                    placeholder='Password (Atleast 5 digits long)' 
-                    secureTextEntry={true} 
-                    value={profile[3]}
-                    onChangeText={(text)=> validateInput(text, 3)}
-                    style={validStates[3]?styles.inputBox:styles.error}
-                />
-                <TextInput 
-                    placeholder='Phone Number (+92[10 more digits])' 
-                    value={profile[4]}
-                    onChangeText={(text)=> validateInput(text, 4)}
-                    style={validStates[4]?styles.inputBox:styles.error}
-                />
-                <TextInput 
-                    placeholder='* Email * (Optional)'
-                    value={profile[5]}
-                    onChangeText={(text)=> validateInput(text, 5)}
-                    style={validStates[5]?styles.inputBox:styles.error}
-                />
-                <TextInput 
-                    placeholder='Birth Day (yyyy-mm-dd)'
-                    value={profile[6]}
-                    onChangeText={(text)=> validateInput(text, 6)}
-                    style={validStates[6]?styles.inputBox:styles.error}
-                />
-                
-                <Text>Join the community as:</Text>
-                <View style={{ flexDirection: 'row'}}>
-                    <CheckBox value={userType[0]} onChange={() => SelectUserType(0)} />
-                    <Text style={{marginTop: 5}}>Doctor</Text>
-                    <CheckBox value={userType[1]} onChange={() => SelectUserType(1)} />
-                    <Text style={{marginTop: 5}}>Patient</Text>
-                </View>
-                <View style={{ flex: 1 }}>
-                    <MultiSelect
-                    hideTags
-                    hideDropdown
-                    items={diseaseList}
-                    uniqueKey="id"
-                    ref={(component) =>  setMultiSelect(component)}
-                    onSelectedItemsChange={ items =>  setSelectedDiseases(items)}
-                    selectedItems={selectedDiseases}
-                    selectText="Diesease channels you want to join"
-                    searchInputPlaceholderText="Search for a disease"
-                    onChangeInput={ (text)=> console.log(text)}
-                    altFontFamily="ProximaNova-Light"
-                    tagRemoveIconColor="#CCC"
-                    tagBorderColor="#CCC"
-                    tagTextColor="#CCC"
-                    selectedItemTextColor="#CCC"
-                    selectedItemIconColor="#CCC"
-                    itemTextColor="#000"
-                    displayKey="name"
-                    searchInputStyle={{ color: '#CCC' }}
-                    submitButtonColor="#008B8B"
-                    submitButtonText="Submit"
-                    />
-                    <View>
-                        {/* This shows the selected diseases on the screen */}
-                        {selectedDiseases? multiSelect.getSelectedItemsExt(selectedDiseases): null}
+            <ImageBackground source={require('../imgs/login_background.jpeg')} style={styles.image}>
+                    <Text style={{color:"#8155BA", fontSize:20, fontStyle:'normal'}}>Welcome to MedChat </Text>
+                    <View style={{ justifyContent: 'center', alignItems: 'center'}}>
+                        <Image 
+                            style={{width:100, height:100, borderRadius:100, resizeMode:'cover'}} 
+                            source={pic? {uri : pic.uri} : require('../imgs/empty_profile.png')}
+                        />
+                        <Button
+                            style={{flex:1, textAlign:'center', color:'blue'}}
+                            onPress={()=>UploadImage()}
+                            title='Upload Image'
+                        ></Button>
                     </View>
-                </View>
-                <Button 
-                    title='Register'
-                    onPress={()=> ValidateAndSend()}
-                />
-                {validAll ? null : <Text>The values in red blocks are not in correct format!</Text>}
+                    <TextInput
+                        placeholder='First Name (letters only)'
+                        value={profile[0]} 
+                        onChangeText={(text)=> validateInput(text, 0)}
+                        style={validStates[0]?styles.inputBox:styles.error}
+                    />
+                    <TextInput
+                        placeholder='Last Name (letters only)'
+                        value={profile[1]}
+                        onChangeText={(text)=> validateInput(text, 1)}
+                        style={validStates[1]?styles.inputBox:styles.error}
+                    />
+                    <TextInput 
+                        placeholder='User Name (start with a letter, can contain alphanumeric afterwards)' 
+                        value={profile[2]}
+                        onChangeText={(text)=> validateInput(text, 2)}
+                        style={validStates[2]?styles.inputBox:styles.error}
+                    />
+                    <TextInput 
+                        placeholder='Password (Atleast 5 digits long)' 
+                        secureTextEntry={true} 
+                        value={profile[3]}
+                        onChangeText={(text)=> validateInput(text, 3)}
+                        style={validStates[3]?styles.inputBox:styles.error}
+                    />
+                    <TextInput 
+                        placeholder='Phone Number (+92[10 more digits])' 
+                        value={profile[4]}
+                        onChangeText={(text)=> validateInput(text, 4)}
+                        style={validStates[4]?styles.inputBox:styles.error}
+                    />
+                    <TextInput 
+                        placeholder='* Email * (Optional)'
+                        value={profile[5]}
+                        onChangeText={(text)=> validateInput(text, 5)}
+                        style={validStates[5]?styles.inputBox:styles.error}
+                    />
+                    <TextInput 
+                        placeholder='Birth Day (yyyy-mm-dd)'
+                        value={profile[6]}
+                        onChangeText={(text)=> validateInput(text, 6)}
+                        style={validStates[6]?styles.inputBox:styles.error}
+                    />
+                    
+                    <Text>Join the community as:</Text>
+                    <View style={{ flexDirection: 'row'}}>
+                        <CheckBox value={userType[0]} onChange={() => SelectUserType(0)} />
+                        <Text style={{marginTop: 5}}>Doctor</Text>
+                        <CheckBox value={userType[1]} onChange={() => SelectUserType(1)} />
+                        <Text style={{marginTop: 5}}>Patient</Text>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                        <MultiSelect
+                        hideTags
+                        hideDropdown
+                        items={diseaseList}
+                        uniqueKey="id"
+                        ref={(component) =>  setMultiSelect(component)}
+                        onSelectedItemsChange={ items =>  setSelectedDiseases(items)}
+                        selectedItems={selectedDiseases}
+                        selectText="Diesease channels you want to join"
+                        searchInputPlaceholderText="Search for a disease"
+                        onChangeInput={ (text)=> console.log(text)}
+                        altFontFamily="ProximaNova-Light"
+                        tagRemoveIconColor="#CCC"
+                        tagBorderColor="#CCC"
+                        tagTextColor="#CCC"
+                        selectedItemTextColor="#CCC"
+                        selectedItemIconColor="#CCC"
+                        itemTextColor="#000"
+                        displayKey="name"
+                        searchInputStyle={{ color: '#CCC' }}
+                        submitButtonColor="#008B8B"
+                        submitButtonText="Submit"
+                        />
+                        <View>
+                            {/* This shows the selected diseases on the screen */}
+                            {selectedDiseases? multiSelect.getSelectedItemsExt(selectedDiseases): null}
+                        </View>
+                    </View>
+                    <Button 
+                        title='Register'
+                        onPress={()=> ValidateAndSend()}
+                    />
+                    {validAll ? null : <Text>The values in red blocks are not in correct format!</Text>}
+                </ImageBackground>
             </ScrollView>
         </View>
     )
@@ -281,7 +283,11 @@ function Register({ navigation }){
 }
 
 const styles = StyleSheet.create({
-
+    image: {
+        flex: 1,
+        resizeMode: "cover",
+        justifyContent: "center"
+      },
     inputBox: {
         borderWidth: 1,
         borderColor: 'black',
