@@ -8,6 +8,7 @@ import {
   View,
   Alert,
   Button,
+  ScrollView,
 } from 'react-native';
 
 function Main({ navigation }) {
@@ -54,12 +55,44 @@ function Main({ navigation }) {
   
   return (
     <>
-    <View>{Channels.map((item, index)=>(
-      <Button title={item+' ->  '+count[index]+'JOINED STATE->'+user_State[index]}  onPress ={()=>handle_database(item ,index)}/>
-    ))}</View>
-
+    <ScrollView>
+    <View style={styles.initial}>
+    <View style={styles.buttonview}>{Channels.map((item, index)=>(
+      <Button title={item+' ->  '+count[index]+'JOINED STATE->'+user_State[index]}  onPress ={()=>handle_database(item ,index)}
+      color="#8155BA"
+      marginTop='10'
+      />
+      
+    ))}
+    <View style={styles.separator} />
+    </View>
+  </View>
+  </ScrollView>
     </>
   );
 }
+const styles = StyleSheet.create({
+  
+  initial : {
+      backgroundColor:'#EED6D3',
+      flex:1
+  },
+  
+  separator: {
+      marginVertical: 8,
+    },
+  buttonview: {
+      borderBottomLeftRadius:50,
+      borderTopLeftRadius:50,
+      borderBottomRightRadius:50,
+      borderTopRightRadius:50,
+      overflow:'hidden',
+      width:'80%',
+      marginLeft:40,
+      marginBottom:10,
+      marginTop:10,
+      marginVertical: 8,
+  }
+})
 
 export default Main;
