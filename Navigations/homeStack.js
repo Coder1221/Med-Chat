@@ -11,6 +11,9 @@ import Channel_Profile from '../Screens/Channel_profile'
 const HomeStack = createStackNavigator({
     // Top Screen is showed by default
     
+    Main:{
+        screen:Main
+    },
     Login: {
         screen: Login,
     },
@@ -22,9 +25,6 @@ const HomeStack = createStackNavigator({
     },
     Profile:{
         screen:Profile
-    },
-    Main:{
-        screen:Main
     },
     Chat:{
         screen:Chat

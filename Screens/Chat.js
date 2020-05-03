@@ -8,11 +8,12 @@ GiftedChat.renderLoading=true
 import {  StyleSheet ,View} from 'react-native';
 
 export default class Chat extends Component<props>{
+  
   static navigationOptions = ({ navigation }) => {  
     return {  
         title: navigation.state.params.channel_name,  
         headerStyle: {  
-                backgroundColor: '#f4511e',  
+                backgroundColor: '#8155BA',  
         },  
         headerTitleStyle: {  
               fontWeight: 'bold',  
@@ -21,7 +22,7 @@ export default class Chat extends Component<props>{
           <Button
             onPress={() => navigation.navigate('Channel_Profile',{channel_name:navigation.state.params.channel_name})}
             title="Info"
-            color="#f4511e"
+            color="#8155BA"
           />
         )
     };  
