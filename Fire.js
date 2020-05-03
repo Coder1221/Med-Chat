@@ -4,8 +4,9 @@ class Fire {
     this.observeAuth();
     this.DataBase= ''
   }
-  observeAuth = () =>
+  observeAuth = () =>{
     firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
+  }
 
   onAuthStateChanged = user => {
     firebase.auth().signInAnonymously();
@@ -33,14 +34,15 @@ class Fire {
     this.DataBase=text
   }
 
-  on = callback =>
+  on = callback =>{
     this.ref_database().on('child_added', snapshot => callback(this.parse(snapshot)));
+  }
   
+
   get timestamp() {
     return firebase.database.ServerValue.TIMESTAMP;
   }
   
-  // send the message to the Backend
   send = messages => {
     for (let i = 0; i < messages.length; i++) {
       const { text, user } = messages[i];
@@ -52,9 +54,9 @@ class Fire {
       this.append(message);
     }
   };
+  
   append = message => this.ref_database(this.DataBase).push(message);
 
-  // close the connection to the Backend
   off() {
     this.ref_database(this.DataBase).off();
   }
