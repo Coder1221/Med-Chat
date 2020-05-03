@@ -177,7 +177,7 @@ function Register({ navigation }){
     return(
         <View>
             <ScrollView>
-            <ImageBackground source={require('../imgs/login_background.jpeg')} style={styles.image}>
+            <Imag eBackground source={require('../imgs/login_background.jpeg')} style={styles.image}>
                     <Text style={{color:"#8155BA", fontSize:20, fontStyle:'normal'}}>Welcome to MedChat </Text>
                     <View style={{ justifyContent: 'center', alignItems: 'center'}}>
                         <Image
@@ -306,10 +306,7 @@ const styles = StyleSheet.create({
         marginBottom: 1,
     },
     buttonView: {
-        borderBottomLeftRadius:50,
-        borderTopLeftRadius:50,
-        borderBottomRightRadius:50,
-        borderTopRightRadius:50,
+        borderRadius: 50,
         overflow:'hidden',
         width:'80%',
         marginLeft:40,

@@ -86,10 +86,7 @@ const styles = StyleSheet.create({
       marginVertical: 8,
     },
   buttonview: {
-      borderBottomLeftRadius:50,
-      borderTopLeftRadius:50,
-      borderBottomRightRadius:50,
-      borderTopRightRadius:50,
+      borderRadius: 50,
       overflow:'hidden',
       width:'80%',
       marginLeft:40,
