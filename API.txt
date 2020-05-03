@@ -1,0 +1,36 @@
+[5:28 PM, 3/1/2020] Bilal Naeem: Guys right now we have only one user with following credentials that can log in
+[5:29 PM, 3/1/2020] Bilal Naeem: {"_id":{"$oid":"5e5baa201c9d440000ed43ee"},"username":"tester","password":"godmodefortestingservershouldbeon","email":"2016bilal1990@gmail.com","phoneNumber":"03217625710","facebookID":"abcd"}
+[5:29 PM, 3/1/2020] Bilal Naeem: yar api chal rha hai ap logon ne app ko kab final karna hai
+[5:29 PM, 3/1/2020] Bilal Naeem: saturday ki deadline thi yar
+[5:29 PM, 3/1/2020] Bilal Naeem: kal b kha tha use complete karne ka but no response
+[5:32 PM, 3/1/2020] Bilal Naeem: these are the sample api calls for different login methods please contact me for any further queries
+[5:32 PM, 3/1/2020] Bilal Naeem: sample api posts -> JSON : 
+    {
+        "method" : "phone",
+        "phoneNumber" : "0300-2328322" 
+    }
+    {
+        "method" : "gmail",
+        "gmailID" : "demoemail@gmail.com" 
+    }
+    {
+        "method" : "server",
+        "username" : "tester",
+        "password" : "givenpassword"
+    }
+    {
+        "method" : "facebook",
+        "token" : "39248fdja8324jfd9"
+    }
+[5:32 PM, 3/1/2020] Bilal Naeem: the api is listening on port 3000
+[5:33 PM, 3/1/2020] Bilal Naeem: it is on local host now but we can change that in future
+[5:33 PM, 3/1/2020] Bilal Naeem: or i can deploy it now on heroku
+[5:33 PM, 3/1/2020] Bilal Naeem: but for local host the call would be like this
+[5:34 PM, 3/1/2020] Bilal Naeem: localhost:3000/login
+[5:34 PM, 3/1/2020] Bilal Naeem: it would be a post call with the json formatted data like given above in the body
+[6:30 PM, 3/1/2020] Bilal Naeem: api is deployed on heroku
+[6:30 PM, 3/1/2020] Bilal Naeem: the  localhost:3000 would be replaced by the https://medchatse.herokuapp.com now
+[6:31 PM, 3/1/2020] Bilal Naeem: sample api call for the facebook authentication method on post man
+[6:33 PM, 3/1/2020] Bilal Naeem: the returned data is the id of the user in mongo db
+[6:34 PM, 3/1/2020] Bilal Naeem: can be used to check the authorization of the user
+[6:37 PM, 3/1/2020] Bilal Naeem: token is supposed to be the token received when you authenticate through fb
