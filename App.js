@@ -5,6 +5,7 @@ import Navigator from './Navigations/homeStack'
 console.disableYellowBox = true;
 
 function App() {
+
   return (
     <Navigator />
 )}

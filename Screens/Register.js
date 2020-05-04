@@ -5,24 +5,30 @@ import ImagePicker from 'react-native-image-picker';
 import CheckBox from '@react-native-community/checkbox';
 import MultiSelect from 'react-native-multiple-select';
 
+import { Circle } from 'react-native-progress'; // https://www.npmjs.com/package/react-native-progress
+
 import { storage } from './firebase_auth'
 import diseaseList from './INITIALIZE_DISEASES.js'
 
 function Register({ navigation }){
     // String array ==> fName, lName, uName, password, phone, email, bday --> 
     const [profile, setProfile] = useState(['','','','','','','',])
-    // Doctor,Patient --> checkBox values
+    // Updates the checkboxes of UserType ==> Doctor or patient
     const [userType, setUserType] = useState([false,false]) 
-    const [selectedDiseases, setSelectedDiseases] = useState('')
+    // A list for selected diseases (index numbers of diseases)
+    const [selectedDiseases, setSelectedDiseases] = useState('')    
+    // Component to show selected diseases on the screen --> docs suggested to make it
     const [multiSelect, setMultiSelect] = useState('')
     const [pic, setPic] = useState(false) // picture val
     const [progress, setProgress] = useState(0) // Progress for image upload
-    const [uploadDisabled, setUploadDisabled] = useState(false)
+    const [imageUploading, setImageUploading] = useState(false) // boolean to diable the button
     // boolean array ==> fName, lName, uName, password, phone, email, bday, isDoctor, isPatient, isNeither
     const [validStates, setValidStates] = useState([1,1,1,1,1,1,1])
     // This becomes tru when all required elements are true 
     const [validAll, setValidAll] = useState(true)
-    // Updates the checkboxes of UserType ==> Doctor or patient
+
+    
+    // Doctor or Patient
     function SelectUserType(entryNumber){
         let prevUserType = userType.slice()
         console.log(prevUserType)
@@ -177,14 +183,19 @@ function Register({ navigation }){
                         const uploadTask = ref.put(blob, metadata)
                         uploadTask.on('state_changed',
                             snapshot => {
-                                var progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-                                console.log('Upload is ' + progress + ' % done');
-                                setProgress(progress)
+                                // console.log("transerferd: ", snapshot.bytesTransferred)
+                                // console.log("totalBytes: ", snapshot.totalBytes)
+                                let latest_progress = snapshot.bytesTransferred / snapshot.totalBytes
+                                console.log('Upload is ' + Math.round(latest_progress*100) + ' % done');
+                                setProgress(latest_progress)
+                                setImageUploading(true)
                             }, error =>{
                                 setProgress(0)
+                                setImageUploading(false)
                                 alert(error)
                                 console.log(error)
                             }, () => {
+                                setImageUploading(false)
                                 storage.ref('images').child(image.fileName).getDownloadURL().then(url=>{
                                     console.log("File Available at: ", url);
                             })
@@ -205,16 +216,28 @@ function Register({ navigation }){
             <ImageBackground source={require('../imgs/login_background.jpeg')} style={styles.image}>
                     <Text style={{color:"#8155BA", fontSize:20, fontStyle:'normal'}}>Welcome to MedChat </Text>
                     <View style={{ justifyContent: 'center', alignItems: 'center'}}>
-                        <Image
-                            style={{width:100, height:100, borderRadius:100, resizeMode:'cover'}} 
-                            source={pic? {uri : pic.uri} : require('../imgs/empty_profile.png')}
-                        />
-                        <View style={styles.buttonview}>
+                        {imageUploading? 
+                            <Circle 
+                                size={100} 
+                                progress={progress}
+                                showsText={true}
+                                color={'8155BA'}
+                            />
+                            :
+                            <Image
+                                style={{width:100, height:100, borderRadius:100, resizeMode:'cover'}} 
+                                source={pic? {uri : pic.uri} : require('../imgs/empty_profile.png')}
+                            />
+                            
+                        }
+                        
+                        
+                        <View style={styles.buttonView}>
                             <Button
                                 color= '#8155BA'
                                 onPress={()=>UploadImage()}
                                 title='Upload Image'
-                                disabled={uploadDisabled}
+                                disabled={imageUploading}
                             />
                         </View>
                     </View>
@@ -333,9 +356,9 @@ const styles = StyleSheet.create({
         borderBottomColor:'#A49393',
     },
     error: {
-        borderWidth: 1,
+        marginTop:10,
+        borderBottomWidth:1,
         borderColor: 'red',
-        marginBottom: 1,
     },
     buttonView: {
         borderRadius: 50,
