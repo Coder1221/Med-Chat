@@ -11,6 +11,8 @@ import {
   ScrollView,
 } from 'react-native';
 
+import auth from '@react-native-firebase/auth';
+
 function Main({ navigation }) {
   
 
@@ -48,24 +50,26 @@ function Main({ navigation }) {
       navigation.navigate('Chat', {name: name , id :unique_id , channel_name : x});
     }
 
-    
   }
   
   return (
     <>
     <ScrollView>
-    <View style={styles.initial}>
-    <View style={styles.buttonview}>{Channels.map((item, index)=>(
-      <Button title={item+' ->  '+count[index]+'JOINED STATE->'+user_State[index]}  onPress ={()=>handle_database(item ,index)}
-      color="#8155BA"
-      marginTop='10'
-      />
-      
-    ))}
-    <View style={styles.separator} />
-    </View>
-  </View>
-  </ScrollView>
+      <View style={styles.initial}>
+        <View style={styles.buttonview}>{Channels.map((item, index)=>(
+          <Button title={item+' ->  '+count[index]+'JOINED STATE->'+user_State[index]}  onPress ={()=>handle_database(item ,index)}
+          color="#8155BA"
+          marginTop='10'
+        />
+        ))}
+        <View style={styles.separator} />
+        </View>
+        <Button 
+          title='Sign Out'
+          onPress={()=> auth().signOut().then(console.log('sigend_out...?'))}
+        />
+      </View>
+    </ScrollView>
     </>
   );
 }
@@ -80,10 +84,7 @@ const styles = StyleSheet.create({
       marginVertical: 8,
     },
   buttonview: {
-      borderBottomLeftRadius:50,
-      borderTopLeftRadius:50,
-      borderBottomRightRadius:50,
-      borderTopRightRadius:50,
+      borderRadius: 50,
       overflow:'hidden',
       width:'80%',
       marginLeft:40,

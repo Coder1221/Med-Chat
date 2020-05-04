@@ -77,7 +77,7 @@ export default class Chat extends Component<props>{
         renderTime
         showUserAvatar
         renderUsernameOnMessage
-        user={ {name:'dd1',_id:'testing_1',avatar: 'https://placeimg.com/140/140/any'} }  //change this line        
+        user={ {name:'dd1',_id:'testing_2',avatar: 'https://placeimg.com/140/140/any'} }  //change this line        
       />
     );
   }

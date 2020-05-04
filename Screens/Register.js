@@ -1,11 +1,11 @@
-import React, {useState, }from 'react'
+import React, { useState } from 'react'
 import {View, Text, Button, StyleSheet, Image, ImageBackground, ScrollView} from 'react-native'
 import { TextInput } from 'react-native-gesture-handler';
 import ImagePicker from 'react-native-image-picker';
 import CheckBox from '@react-native-community/checkbox';
-
 import MultiSelect from 'react-native-multiple-select';
 
+import { storage } from './firebase_auth'
 import diseaseList from './INITIALIZE_DISEASES.js'
 
 function Register({ navigation }){
@@ -16,11 +16,12 @@ function Register({ navigation }){
     const [selectedDiseases, setSelectedDiseases] = useState('')
     const [multiSelect, setMultiSelect] = useState('')
     const [pic, setPic] = useState(false) // picture val
+    const [progress, setProgress] = useState(0) // Progress for image upload
+    const [uploadDisabled, setUploadDisabled] = useState(false)
     // boolean array ==> fName, lName, uName, password, phone, email, bday, isDoctor, isPatient, isNeither
     const [validStates, setValidStates] = useState([1,1,1,1,1,1,1])
     // This becomes tru when all required elements are true 
-    const [validAll, setValidAll] = useState(true) 
-
+    const [validAll, setValidAll] = useState(true)
     // Updates the checkboxes of UserType ==> Doctor or patient
     function SelectUserType(entryNumber){
         let prevUserType = userType.slice()
@@ -49,7 +50,7 @@ function Register({ navigation }){
         valArr.forEach(val => {
             if(!val){
                 setValidAll(false)
-                console.log("here`")
+                // console.log("Should return false")
                 return
             }
         })
@@ -94,7 +95,8 @@ function Register({ navigation }){
 
         try{
             alert(respJson.message)
-            navigation.pop() // will move back to Login Screen after a succesful Registration
+            if(respJson.message == "Registration Successful!")
+                navigation.pop() // will move back to Login Screen after a succesful Registration
         }catch(err){
             alert(err)
         }
@@ -156,15 +158,38 @@ function Register({ navigation }){
         return prevValidArr[type]
     }
 
-    function UploadImage() {
+    async function UploadImage() {
         // An options obj need to be passed to the img lib.
         const options = {
             noData : true,
         }
-        ImagePicker.launchImageLibrary(options, response => {
-            console.log('Response: ', response)
-            if(response.uri){
-                setPic(response)
+        ImagePicker.launchImageLibrary(options, image => {
+            // console.log('Response: ', response)
+            if(image.uri){
+                setPic(image)
+                const metadata = {
+                    contentType: image.type
+                }
+                fetch(image.uri)
+                    .then(response => response.blob())
+                    .then( blob => {
+                        const ref = storage.ref(`images/${image.fileName}`)
+                        const uploadTask = ref.put(blob, metadata)
+                        uploadTask.on('state_changed',
+                            snapshot => {
+                                var progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                                console.log('Upload is ' + progress + ' % done');
+                                setProgress(progress)
+                            }, error =>{
+                                setProgress(0)
+                                alert(error)
+                                console.log(error)
+                            }, () => {
+                                storage.ref('images').child(image.fileName).getDownloadURL().then(url=>{
+                                    console.log("File Available at: ", url);
+                            })
+                        })
+                    })
             }
             else if (response.error){
                 alert(response.error)
@@ -180,15 +205,18 @@ function Register({ navigation }){
             <ImageBackground source={require('../imgs/login_background.jpeg')} style={styles.image}>
                     <Text style={{color:"#8155BA", fontSize:20, fontStyle:'normal'}}>Welcome to MedChat </Text>
                     <View style={{ justifyContent: 'center', alignItems: 'center'}}>
-                        <Image 
+                        <Image
                             style={{width:100, height:100, borderRadius:100, resizeMode:'cover'}} 
                             source={pic? {uri : pic.uri} : require('../imgs/empty_profile.png')}
                         />
-                        <Button
-                            style={{flex:1, textAlign:'center', color:'blue'}}
-                            onPress={()=>UploadImage()}
-                            title='Upload Image'
-                        ></Button>
+                        <View style={styles.buttonview}>
+                            <Button
+                                color= '#8155BA'
+                                onPress={()=>UploadImage()}
+                                title='Upload Image'
+                                disabled={uploadDisabled}
+                            />
+                        </View>
                     </View>
                     <TextInput
                         placeholder='First Name (letters only)'
@@ -234,12 +262,12 @@ function Register({ navigation }){
                         style={validStates[6]?styles.inputBox:styles.error}
                     />
                     
-                    <Text>Join the community as:</Text>
-                    <View style={{ flexDirection: 'row'}}>
-                        <CheckBox value={userType[0]} onChange={() => SelectUserType(0)} />
-                        <Text style={{marginTop: 5}}>Doctor</Text>
+                    <Text style={{color:"#8155BA",textAlign:'left'}}>   Join the community as:</Text>
+                    <View style={{ flexDirection: 'row',marginLeft:10,marginBottom:10}}>
+                        <CheckBox checkedColor='red' value={userType[0]} onChange={() => SelectUserType(0)} />
+                        <Text style={{marginTop: 5,color:"#8155BA",marginRight:70}}>Doctor</Text>
                         <CheckBox value={userType[1]} onChange={() => SelectUserType(1)} />
-                        <Text style={{marginTop: 5}}>Patient</Text>
+                        <Text style={{marginTop: 5,color:"#8155BA"}}>Patient</Text>
                     </View>
                     <View style={{ flex: 1 }}>
                         <MultiSelect
@@ -254,15 +282,20 @@ function Register({ navigation }){
                         searchInputPlaceholderText="Search for a disease"
                         onChangeInput={ (text)=> console.log(text)}
                         altFontFamily="ProximaNova-Light"
-                        tagRemoveIconColor="#CCC"
-                        tagBorderColor="#CCC"
-                        tagTextColor="#CCC"
+                        tagRemoveIconColor="#8155BA"
+                        tagBorderColor="#8155BA"
+                        tagTextColor="#8155BA"
+                        textColor="#8155BA"
                         selectedItemTextColor="#CCC"
                         selectedItemIconColor="#CCC"
                         itemTextColor="#000"
                         displayKey="name"
-                        searchInputStyle={{ color: '#CCC' }}
-                        submitButtonColor="#008B8B"
+                        searchInputStyle={{ color: "#8155BA" }}
+                        styleListContainer = {{backgroundColor: "#FCF4E4" }}
+                        styleDropdownMenuSubsection = {{backgroundColor: "#100F4E4"}}
+                        searchInputStyle = {{backgroundColor: "#100F4E4"}}
+                        itemTextColor = "#8155BA"
+                        submitButtonColor="#8155BA"
                         submitButtonText="Submit"
                         />
                         <View>
@@ -270,33 +303,46 @@ function Register({ navigation }){
                             {selectedDiseases? multiSelect.getSelectedItemsExt(selectedDiseases): null}
                         </View>
                     </View>
-                    <Button 
-                        title='Register'
-                        onPress={()=> ValidateAndSend()}
-                    />
+                    <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                        <View style={styles.buttonView}>
+                            <Button  
+                                title='Register'
+                                color= '#8155BA'
+                                onPress={()=> ValidateAndSend()}
+                            />
+                        </View>
+                    </View>
                     {validAll ? null : <Text>The values in red blocks are not in correct format!</Text>}
                 </ImageBackground>
             </ScrollView>
         </View>
     )
-
 }
 
 const styles = StyleSheet.create({
     image: {
         flex: 1,
         resizeMode: "cover",
-        justifyContent: "center"
+        justifyContent: "center",
+        // alignSelf: 'stretch',
+        // width: null,
       },
     inputBox: {
-        borderWidth: 1,
-        borderColor: 'black',
-        marginBottom: 1,
+        marginTop:10,
+        borderBottomWidth:1,
+        borderBottomColor:'#A49393',
     },
     error: {
         borderWidth: 1,
         borderColor: 'red',
         marginBottom: 1,
+    },
+    buttonView: {
+        borderRadius: 50,
+        overflow:'hidden',
+        width:'50%',
+        marginBottom:5,
+        marginTop: 10
     }
 })
 
