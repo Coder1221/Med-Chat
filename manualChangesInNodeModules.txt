@@ -1,0 +1,11 @@
+1. Setting a timer for a long period of time, i.e. multiple minutes, is a performance and correctness issue on Android as it keeps the timer module awake, and timers can only be called when the app is in the foreground. See https://github.com/facebook/react-native/issues/12981 for more info.
+(Saw setTimeout with duration 120000ms)
+To fix this issue...
+Navigate to your node_modules/react-native/Libraries/Core/Timers/JSTimers.js file.
+Look for the variable MAX_TIMER_DURATION_MS
+Change its value to 10000 * 1000
+Save the changes (with auto format turned off) and re-build your app.
+
+2. List-deprecated-view:
+
+
