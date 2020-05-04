@@ -3,6 +3,9 @@ import {Text, Button ,ActivityIndicator} from 'react-native'
 import { GiftedChat } from 'react-native-gifted-chat';
 import Fire from '../Fire';
 import { cond } from 'react-native-reanimated';
+// import firebase from 'firebase';
+import PushNotification from 'react-native-push-notification';
+
 GiftedChat.renderLoading=true
 
 import {  StyleSheet ,View} from 'react-native';
@@ -35,9 +38,35 @@ export default class Chat extends Component<props>{
     unique_id:'',
     loading:true
   };
+  constructor(props){
+    super(props)
+    PushNotification.configure({
+      onRegister: function (token) {
+        console.log("TOKEN:", token);
+      },
+      onNotification: function (notification) {
+        console.log("NOTIFICATION:", notification);
+      },
+      permissions: {
+        alert: true,
+        badge: true,
+        sound: true,
+      },
+      popInitialNotification: true,
+      requestPermissions: true,
+    });
+  
+  }
+
+  testPush=()=>{
+    PushNotification.localNotification({
+      title: "My Notification Title", // (optional)
+      message: "My Notification Message", // (required)
+    });
+  }
 
   componentDidMount() {  /// this compent will fetch all prevoius messages from chat
-   
+
     GiftedChat.renderLoading=true
     this.database=this.props.navigation.state.params.channel_name
     this.user=this.props.navigation.state.params.name
@@ -50,7 +79,7 @@ export default class Chat extends Component<props>{
     Fire.shared.on(message =>this.setState(previousState => ({
       messages: GiftedChat.append(previousState.messages, message),
       loading:  false
-    })));
+    })),this.testPush());
   
 
   }
@@ -68,6 +97,8 @@ export default class Chat extends Component<props>{
   }
   render() {
     return (
+      <>
+      <Button title='press ma' onPress={()=>this.testPush()}/>
       <GiftedChat
         renderLoading={this.renderLoading}x
         messages={this.state.messages}
@@ -79,6 +110,7 @@ export default class Chat extends Component<props>{
         renderUsernameOnMessage
         user={ {name:'dd1',_id:'testing_1',avatar: 'https://placeimg.com/140/140/any'} }  //change this line        
       />
+      </>
     );
   }
 }
