@@ -89,11 +89,12 @@ async function LoginMongoDB(method){
         return(
             <View style={styles.initial}>
                 <ImageBackground source={require('../imgs/login_background.jpeg')} style={styles.image}>
-                    <Image
-                        style = {styles.logo}
-                        source={require('../imgs/logo.jpeg')}
-                    />
                     <ScrollView >
+                        <Image
+                            style = {styles.logo}
+                            source={require('../imgs/logo.jpeg')}
+                        />
+                        <Text style={{marginLeft:155,color:"#8155BA"}}>MedChat</Text>
                         <Text style={styles.textformat}>Log In</Text>
                         <TextInput 
                             placeholder='Username'
@@ -167,9 +168,10 @@ async function LoginMongoDB(method){
 const styles = StyleSheet.create({
     image: {
         flex: 1,
-        resizeMode: "cover",
+        resizeMode: "stretch",
+        width:null,
+        height:null,
         justifyContent: "center"
-        
       },
     inputBox : {
         marginTop:10,
@@ -183,9 +185,9 @@ const styles = StyleSheet.create({
         flex:1
     },
     logo : {
-        width:125,
-        height:125,
-        marginLeft:125
+        width:90,
+        height:90,
+        marginLeft:145
     },
     textformat : {
         textAlign:'left',
